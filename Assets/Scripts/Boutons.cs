@@ -18,13 +18,13 @@ public class Boutons : MonoBehaviour
     private float angle3;
     private float angle4;
     private float angle5;
-    private GameObject torche = GameObject.Find("Bras6");
-    private GameObject axe0 = GameObject.Find("OsBras1");
-    private GameObject axe1 = GameObject.Find("OsBras2");
-    private GameObject axe2 = GameObject.Find("OsBras3");
-    private GameObject axe3 = GameObject.Find("OsBras4");
-    private GameObject axe4 = GameObject.Find("OsBras5");
-    private GameObject axe5 = GameObject.Find(".......");
+    private GameObject torche;
+    private GameObject axe0;
+    private GameObject axe1;
+    private GameObject axe2;
+    private GameObject axe3;
+    private GameObject axe4;
+    private GameObject axe5;
 
     public enum Mode { AXES, COORDS, AUTO }
     public Mode mode;
@@ -43,6 +43,14 @@ public class Boutons : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        torche = GameObject.Find("Bras6");
+        axe0 = GameObject.Find("OsBras1");
+        axe1 = GameObject.Find("OsBras2");
+        axe2 = GameObject.Find("OsBras3");
+        axe3 = GameObject.Find("OsBras4");
+        axe4 = GameObject.Find("OsBras5");
+        axe5 = GameObject.Find("OsBras6");
+
         mode = Mode.COORDS;
         axe = 0;
         pas_angle_continu = 0.5f;
