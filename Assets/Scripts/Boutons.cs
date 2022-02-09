@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Boutons : MonoBehaviour
 {
-    public bool mode_axes;
     public int axe;
     public float pas_angle;
     public float pas_pos;
@@ -27,6 +26,10 @@ public class Boutons : MonoBehaviour
     private GameObject axe4 = GameObject.Find("OsBras5");
     private GameObject axe5 = GameObject.Find(".......");
 
+    public enum Mode { AXES, COORDS, AUTO }
+    public Mode mode;
+
+
     public float PosX { get => posX; set => posX = value; }
     public float PosY { get => posY; set => posY = value; }
     public float PosZ { get => posZ; set => posZ = value; }
@@ -40,7 +43,7 @@ public class Boutons : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        mode_axes = false;
+        mode = Mode.COORDS;
         axe = 0;
         pas_angle_continu = 0.5f;
         pas_pos_continu = 0.5f;
@@ -50,12 +53,12 @@ public class Boutons : MonoBehaviour
         posX = torche.transform.position.x;
         posY = torche.transform.position.y;
         posZ = torche.transform.position.z;
-        angle0 = axe0.transform.rotation.y;
-        angle1 = axe1.transform.rotation.z;
-        angle2 = axe2.transform.rotation.z;
-        angle3 = axe3.transform.rotation.y;
-        angle4 = axe4.transform.rotation.z;
-        angle5 = axe5.transform.rotation.y;
+        angle0 = axe0.transform.eulerAngles.y;
+        angle1 = axe1.transform.eulerAngles.z;
+        angle2 = axe2.transform.eulerAngles.z;
+        angle3 = axe3.transform.eulerAngles.y;
+        angle4 = axe4.transform.eulerAngles.z;
+        angle5 = axe5.transform.eulerAngles.y;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -65,40 +68,42 @@ public class Boutons : MonoBehaviour
         {
             case "Bouton bas":
                 axe -= 1;
-                if (axe < 0 && mode_axes) { axe = 5; }
-                else if (axe < 0) { axe = 2; }
+                if (axe < 0 && mode == Mode.COORDS) { axe = 2; }
+                else if (axe < 0 && mode == Mode.AXES) { axe = 5; }
                 break;
             case "Bouton haut":
                 axe += 1;
-                if ((axe > 5 && mode_axes) || (axe > 2 && !mode_axes)) { axe = 0; }
+                if ((axe > 5 && mode == Mode.AXES) || (axe > 2 && mode == Mode.COORDS)) { axe = 0; }
                 break;
             case "Bouton mode":
-                mode_axes = !mode_axes;
+                if (mode == Mode.COORDS) { mode = Mode.AXES; }
+                else if (mode == Mode.AXES) { mode = Mode.AUTO; }
+                else { mode = Mode.COORDS; }
                 axe = 0;
                 break;
             case "Bouton moins":
                 switch (axe)
                 {
                     case 0:
-                        if (mode_axes) { angle0 -= pas_angle; }
-                        else { posX -= pas_pos; }
+                        if (mode == Mode.COORDS) { posX -= pas_pos; }
+                        else if (mode == Mode.AXES) { angle0 -= pas_angle; }
                         break;
                     case 1:
-                        if (mode_axes) { angle1 -= pas_angle; }
-                        else { posY -= pas_pos; }
+                        if (mode == Mode.COORDS) { posY -= pas_pos; }
+                        else if (mode == Mode.AXES) { angle1 -= pas_angle; }
                         break;
                     case 2:
-                        if (mode_axes) { angle2 -= pas_angle; }
-                        else { posZ -= pas_pos; }
+                        if (mode == Mode.COORDS) { posZ -= pas_pos; }
+                        else if (mode == Mode.AXES) { angle2 -= pas_angle; }
                         break;
                     case 3:
-                        angle3 -= pas_angle;
+                        if (mode == Mode.AXES) { angle3 -= pas_angle; }
                         break;
                     case 4:
-                        angle4 -= pas_angle;
+                        if (mode == Mode.AXES) { angle4 -= pas_angle; }
                         break;
                     case 5:
-                        angle5 -= pas_angle;
+                        if (mode == Mode.AXES) { angle5 -= pas_angle; }
                         break;
                     default:
                         break;
@@ -108,25 +113,25 @@ public class Boutons : MonoBehaviour
                 switch (axe)
                 {
                     case 0:
-                        if (mode_axes) { angle0 += pas_angle; }
-                        else { posX += pas_pos; }
+                        if (mode == Mode.COORDS) { posX += pas_pos; }
+                        else if (mode == Mode.AXES) { angle0 += pas_angle; }
                         break;
                     case 1:
-                        if (mode_axes) { angle1 += pas_angle; }
-                        else { posY += pas_pos; }
+                        if (mode == Mode.COORDS) { posY += pas_pos; }
+                        else if (mode == Mode.AXES) { angle1 += pas_angle; }
                         break;
                     case 2:
-                        if (mode_axes) { angle2 += pas_angle; }
-                        else { posZ += pas_pos; }
+                        if (mode == Mode.COORDS) { posZ += pas_pos; }
+                        else if (mode == Mode.AXES) { angle2 += pas_angle; }
                         break;
                     case 3:
-                        angle3 += pas_angle;
+                        if (mode == Mode.AXES) { angle3 += pas_angle; }
                         break;
                     case 4:
-                        angle4 += pas_angle;
+                        if (mode == Mode.AXES) { angle4 += pas_angle; }
                         break;
                     case 5:
-                        angle5 += pas_angle;
+                        if (mode == Mode.AXES) { angle5 += pas_angle; }
                         break;
                     default:
                         break;
@@ -146,25 +151,25 @@ public class Boutons : MonoBehaviour
                 switch (axe)
                 {
                     case 0:
-                        if (mode_axes) { angle0 -= pas_angle_continu; }
-                        else { posX -= pas_pos_continu; }
+                        if (mode == Mode.COORDS) { posX -= pas_pos_continu; }
+                        else if (mode == Mode.AXES) { angle0 += pas_angle_continu; }
                         break;
                     case 1:
-                        if (mode_axes) { angle1 -= pas_angle_continu; }
-                        else { posY -= pas_pos_continu; }
+                        if (mode == Mode.COORDS) { posY -= pas_pos_continu; }
+                        else if (mode == Mode.AXES) { angle1 -= pas_angle_continu; }
                         break;
                     case 2:
-                        if (mode_axes) { angle2 -= pas_angle_continu; }
-                        else { posZ -= pas_pos_continu; }
+                        if (mode == Mode.COORDS) { posZ -= pas_pos_continu; }
+                        else if (mode == Mode.AXES) { angle2 -= pas_angle_continu; }
                         break;
                     case 3:
-                        angle3 -= pas_angle_continu;
+                        if (mode == Mode.AXES) { angle3 -= pas_angle_continu; }
                         break;
                     case 4:
-                        angle4 -= pas_angle_continu;
+                        if (mode == Mode.AXES) { angle4 -= pas_angle_continu; }
                         break;
                     case 5:
-                        angle5 -= pas_angle_continu;
+                        if (mode == Mode.AXES) { angle5 -= pas_angle_continu; }
                         break;
                     default:
                         break;
@@ -174,25 +179,25 @@ public class Boutons : MonoBehaviour
                 switch (axe)
                 {
                     case 0:
-                        if (mode_axes) { angle0 += pas_angle_continu; }
-                        else { posX += pas_pos_continu; }
+                        if (mode == Mode.COORDS) { posX += pas_pos_continu; }
+                        else if (mode == Mode.AXES) { angle0 += pas_angle_continu; }
                         break;
                     case 1:
-                        if (mode_axes) { angle1 += pas_angle_continu; }
-                        else { posY += pas_pos_continu; }
+                        if (mode == Mode.COORDS) { posY += pas_pos_continu; }
+                        else if (mode == Mode.AXES) { angle1 += pas_angle_continu; }
                         break;
                     case 2:
-                        if (mode_axes) { angle2 += pas_angle_continu; }
-                        else { posZ += pas_pos_continu; }
+                        if (mode == Mode.COORDS) { posZ += pas_pos_continu; }
+                        else if (mode == Mode.AXES) { angle2 += pas_angle_continu; }
                         break;
                     case 3:
-                        angle3 += pas_angle_continu;
+                        if (mode == Mode.AXES) { angle3 += pas_angle_continu; }
                         break;
                     case 4:
-                        angle4 += pas_angle_continu;
+                        if (mode == Mode.AXES) { angle4 += pas_angle_continu; }
                         break;
                     case 5:
-                        angle5 += pas_angle_continu;
+                        if (mode == Mode.AXES) { angle5 += pas_angle_continu; }
                         break;
                     default:
                         break;
@@ -205,31 +210,29 @@ public class Boutons : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (mode_axes)
+        if (mode == Mode.COORDS)
         {
-            axe0.transform.rotation.y = angle0;
-            axe1.transform.rotation.z = angle1;
-            axe2.transform.rotation.z = angle2;
-            axe3.transform.rotation.y = angle3;
-            axe4.transform.rotation.z = angle4;
-            axe5.transform.rotation.y = angle5;
-
-            angle0 = axe0.transform.rotation.y;
-            angle1 = axe1.transform.rotation.z;
-            angle2 = axe2.transform.rotation.z;
-            angle3 = axe3.transform.rotation.y;
-            angle4 = axe4.transform.rotation.z;
-            angle5 = axe5.transform.rotation.y;
-        }
-        else
-        {
-            torche.transform.position.x = posX;
-            torche.transform.position.y = posY;
-            torche.transform.position.z = posZ;
+            torche.transform.position = new Vector3(posX, posY, posZ);
 
             posX = torche.transform.position.x;
             posY = torche.transform.position.y;
             posZ = torche.transform.position.z;
+        }
+        else if (mode == Mode.AXES)
+        {
+            axe0.transform.eulerAngles = new Vector3(axe0.transform.eulerAngles.x, angle0, axe0.transform.eulerAngles.z);
+            axe1.transform.eulerAngles = new Vector3(axe1.transform.eulerAngles.x, axe1.transform.eulerAngles.y, angle1);
+            axe2.transform.eulerAngles = new Vector3(axe2.transform.eulerAngles.x, axe2.transform.eulerAngles.y, angle2);
+            axe3.transform.eulerAngles = new Vector3(axe3.transform.eulerAngles.x, angle3, axe3.transform.eulerAngles.z);
+            axe4.transform.eulerAngles = new Vector3(axe4.transform.eulerAngles.x, axe4.transform.eulerAngles.y, angle4);
+            axe5.transform.eulerAngles = new Vector3(axe5.transform.eulerAngles.x, angle5, axe5.transform.eulerAngles.z);
+
+            angle0 = axe0.transform.eulerAngles.y;
+            angle1 = axe1.transform.eulerAngles.z;
+            angle2 = axe2.transform.eulerAngles.z;
+            angle3 = axe3.transform.eulerAngles.y;
+            angle4 = axe4.transform.eulerAngles.z;
+            angle5 = axe5.transform.eulerAngles.y;
         }
     }
 }
