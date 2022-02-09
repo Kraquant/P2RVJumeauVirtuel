@@ -70,9 +70,6 @@ public class FileInteraction : MonoBehaviour
                 transform.position = Vector3.Lerp(trajectoireCoord[stepMax], trajectoireCoord[0], timeStep - step);
                 //reset Materials
                 resetMaterial();
-
-
-
             }
             else
             {
@@ -100,7 +97,7 @@ public class FileInteraction : MonoBehaviour
 
         foreach (string line in fileLines)
         {
-
+            
             Match xLine = Regex.Match(line, patternX);
             Match yLine = Regex.Match(line, patternY);
             Match zLine = Regex.Match(line, patternZ);

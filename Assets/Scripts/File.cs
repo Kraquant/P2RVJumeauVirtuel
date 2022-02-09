@@ -3,87 +3,133 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Text.RegularExpressions;
 using System.IO;
+using System.Threading;
 
 public class File
 {
-    class Point{
-        public int _lineID { get; set; }
-        public Vector3 _coords { get; set; }
-        public Vector3 _normal { get; set; }
-        public Vector2 _positionneur { get; set; }
-        public int _level { get; set; }
-        public bool _arc { get; set; }
-        public float _speed { get; set; }
+    //Private attributes
+    private List<Point> _pointList;
+    private int _duration;
+    private string _name;
+    private string _fileText;
+    private Thread threadReading;
+    private int[] _readingStatus;
 
-
-        public Point()
-        {
-            _coords = new Vector3();
-            _normal = new Vector3();
-            _positionneur = new Vector2();
-            _level = 0;
-            _arc = false;
-            _lineID = 0;
+    //Properties
+    public int Duration
+    {
+        get {
+            if (threadReading.IsAlive)
+            {
+                Debug.LogError("Error: You tried to access Duration but the value is currently edited on a separate thread.");
+                return 0;
+            } else
+            {
+                return _duration;
+            }
         }
-        public Point(int lineID, int level, bool arc, Vector3 coords, Vector3 normal, Vector2 positionneur, float speed)
+    }
+    public string Name
+    {
+        get
         {
-            _lineID = lineID;
-            _level = 0;
-            _arc = false;
-            _coords = coords;
-            _normal = normal;
-            _positionneur = positionneur;
-            _speed = speed;
-              
+            if (threadReading.IsAlive)
+            {
+                Debug.LogError("Error: You tried to access Name but the value is currently edited on a separate thread.");
+                return null;
+            }
+            else
+            {
+                return _name;
+            }
+        }
+    }
+    public Point[] Points {
+        get
+        {
+            if (threadReading.IsAlive)
+            {
+                Debug.LogError("Error: You tried to access Points but the value is currently edited on a separate thread.");
+                return null;
+            }
+            else
+            {
+                return _pointList.ToArray();
+            }
+        }
+    }
+    public bool IsReading
+    {
+        get
+        {
+            return threadReading.IsAlive;
+        }
+    }
+    public int[] readingStatus
+    {
+        get
+        {
+            return _readingStatus;
         }
     }
 
-    private List<Point> pointList;
-    public int _duration { get; private set; }
-    public string _name { get; private set; }
-
     public File()
     {
-        pointList = new List<Point>();
+        _pointList = new List<Point>();
+        _name = "Undefined name";
         _duration = 0;
+        _readingStatus = new int[2] { 0, 0 };
     }
 
     public File(TextAsset file)
     {
+        _pointList = new List<Point>();
+        _name = "Undefined name";
+        _duration = 0;
+        _readingStatus = new int[2] { 0, 0 };
+
+        _fileText = file.text;
+
+        threadReading = new Thread(readFile);
+        threadReading.Start();
     }
 
-    private void readFile(TextAsset file)
+    private void readFile()
     {
-        Vector3 reference = new Vector3(0.0f, 0.0f, 0.0f);
+        Debug.Log("Reading File...");
 
-        string fileText = file.text;
-        string[] fileLines = Regex.Split(fileText, "\\n|\\r|\\r\\n");
+        string[] fileLines =Regex.Split(_fileText, "\\n");
+        _readingStatus[1] = fileLines.Length;
 
-        string patternX = "(?<=X=)[\\-]?\\d+[\\.]?\\d+(?=\\s)";
-        string patternY = "(?<=Y=)[\\-]?\\d+[\\.]?\\d+(?=\\s)";
-        string patternZ = "(?<=Z=)[\\-]?\\d+[\\.]?\\d+(?=\\s)";
+        //Regex patterns #################################################################################
+        string patternX = "(?<=X)[\\d\\-]?\\w+[\\.]?\\w+[\\.]?(?=\\s)";
+        string patternY = "(?<=X)[\\d\\-]?\\w+[\\.]?\\w+[\\.]?(?=\\s)";
+        string patternZ = "(?<=Z)[\\d\\-]?\\w+[\\.]?\\w+[\\.]?(?=\\s)";
 
-        string patternA3 = "(?<=A3=)[\\-]?\\d+[\\.]?\\d+(?=\\s)";
-        string patternB3 = "(?<=B3=)[\\-]?\\d+[\\.]?\\d+(?=\\s)";
-        string patternC3 = "(?<=C3=)[\\-]?\\d+[\\.]?\\d+(?=\\s)";
+        string patternA3 = "(?<=A3=)[\\d\\-]?\\w+[\\.]?\\w+[\\.]?(?=\\s)";
+        string patternB3 = "(?<=B3=)[\\d\\-]?\\w+[\\.]?\\w+[\\.]?(?=\\s)";
+        string patternC3 = "(?<=C3=)[\\d\\-]?\\w+[\\.]?\\w+[\\.]?(?=\\s)";
 
-        string patternE1 = "(?<=E1=)[\\-]?\\d+[\\.]?\\d+(?=\\s)";
-        string patternE2 = "(?<=E2=)[\\-]?\\d+[\\.]?\\d+(?=\\s)";
+        string patternE1 = "(?<=E1=)[\\d\\-]?\\w+[\\.]?\\w+[\\.]?(?=\\s)";
+        string patternE2 = "(?<=E2=)[\\d\\-]?\\w+[\\.]?\\w+[\\.]?((?=\\s)|$)"; //Different pattern because E2 can be at the end of the line
 
-        string patternN = "(?<=N=)[\\-]?\\d+[\\.]?\\d+(?=\\s)";
-        string patternArc = "(?<=H45=)\\w+(?=\n)";
-        string patternF = "(?<=F)[\\-]?\\d+[\\.]?\\d+(?=\\.)";
-        string patternLevel = "(?<= Niv)\\d + (?=:)";
+        string patternN = "(?<=N)[\\-]?\\w+[\\.]?\\w+(?=\\s)";
+        string patternArc = "(?<=H45=)\\w+((?=\\s)|$)";
+        string patternF = "(?<=F)[\\-]?\\w+[\\.]?\\w+(?=\\.)";
+        string patternLevel = "(?<=Niv)\\w+(?=:)";
         string patternTime = "(?<=Temps programme : )\\w+(?= min)";
-        string patternName = "(?<=Program file name = )[\\w| |.]+(?=\n)";
+        string patternName = "(?<=Program file name = )[\\w| |.]+";
 
         float FState = 0.0f;
         bool arcState = false;
         int levelState = 0;
 
+        bool foundName = false;
+        bool foundTime = false;
+
         foreach (string line in fileLines)
         {
-
+            _readingStatus[0] += 1;
             //Searching patterns in the Line
             Match xLine = Regex.Match(line, patternX);
             Match yLine = Regex.Match(line, patternY);
@@ -101,61 +147,68 @@ public class File
             Match E1Line = Regex.Match(line, patternE1);
             Match E2Line = Regex.Match(line, patternE2);
 
-            Match timeLine = Regex.Match(line, patternTime);
+            
             Match levelLine = Regex.Match(line, patternLevel);
-            Match nameLine = Regex.Match(line, patternName);
 
-            bool isPoint = xLine.Success && yLine.Success && zLine.Success && A3Line.Success && B3Line.Success && C3Line.Success && E1Line.Success && E2Line.Success;
-            bool couldBePoint = xLine.Success || yLine.Success || zLine.Success || A3Line.Success || B3Line.Success || C3Line.Success || E1Line.Success || E2Line.Success;
-            if (couldBePoint)
+            if (!foundName)
             {
-                if (NLine.Success)
+                Match nameLine = Regex.Match(line, patternName);
+                if (nameLine.Success)
                 {
-                    Debug.LogWarning("A point might not have been added. REF N:" + NLine.Value);
+                    _name = nameLine.Value;
+                    foundName = true;
                 }
-                else
+            }
+            if (!foundTime)
+            {
+                Match timeLine = Regex.Match(line, patternTime);
+                if (timeLine.Success)
                 {
-                    Debug.LogWarning("A point might not have been added. REF not set");
+                    int timeINT;
+                    int.TryParse(timeLine.Value, out timeINT);
+                    _duration = timeINT;
+                    foundTime = true;
                 }
-             
             }
-
-
-
-            if (nameLine.Success)
-            {
-                _name = nameLine.Value;
-            } 
-            else if (timeLine.Success)
-            {
-                int timeINT;
-                int.TryParse(timeLine.Value, out timeINT);
-                _duration = timeINT;
-            }
-            else if (levelLine.Success)
+            
+            if (levelLine.Success)
             {
                 int.TryParse(levelLine.Value, out levelState);
             }
-            else if (arcLine.Success)
+            if (arcLine.Success)
             {
-                switch (arcLine.Value)
+                if (arcLine.Value.Contains("ON"))
                 {
-                    case "ON":
-                        arcState = true;
-                        break;
-                    case "OFF":
-                        arcState = false;
-                        break;
-                    default:
-                        arcState = false;
-                        break;
+                    arcState = true;
+                }
+                else if (arcLine.Value.Contains("OFF"))
+                {
+                    arcState = false;
+                } else 
+                {
+                    Debug.LogWarning("Error while reading Arc status. Line:\n" + line);
                 }
             }
-            else if (FLine.Success)
+            if (FLine.Success)
             {
                 float.TryParse(FLine.Value, out FState);
             }
 
+            bool isPoint = xLine.Success && yLine.Success && zLine.Success && A3Line.Success && B3Line.Success && C3Line.Success && E1Line.Success && E2Line.Success;
+            bool couldBePoint = xLine.Success || yLine.Success || zLine.Success || A3Line.Success || B3Line.Success || C3Line.Success || E1Line.Success || E2Line.Success;
+
+            if (couldBePoint && !isPoint)
+            {
+                if (NLine.Success)
+                {
+                    Debug.LogWarning("A point might not have been added. REF N:" + NLine.Value + " at line:\n" + line);
+                }
+                else
+                {
+                    Debug.LogWarning("A point might not have been added. Line:\n" + line);
+                }
+
+            }
 
             if (isPoint)
             {
@@ -199,11 +252,49 @@ public class File
                 Vector3 coords = new Vector3(xF, yF, zF);
                 Vector3 normal = new Vector3(aF, bF, cF);
                 Vector2 positionneur = new Vector2(e1F, e2F);
-                pointList.Add(new Point(nInt, levelState, arcState, coords, normal, positionneur, FState));
+                _pointList.Add(new Point(nInt, levelState, arcState, coords, normal, positionneur, FState));
 
 
             }
 
         }
+        Debug.Log("Finished reading file !");
+        printStats();
+
+        _readingStatus[0] = 0;
+        _readingStatus[1] = 0;
+    }
+
+    public void printStats()
+    {
+        Debug.Log("File object properties:\nName: " + _name + "\nDuration: " + _duration + " minutes\nNumberOfPoints: " + _pointList.Count);
+    }
+
+    public void debugReadPoints()
+    {
+        foreach(Point point in _pointList)
+        {
+            point.printPoint();
+        }
+    }
+
+    public void waitEndReading()
+    {
+        if (threadReading.IsAlive)
+        {
+            threadReading.Join();
+        }
+    }
+
+    public void readNewFile(TextAsset file)
+    {
+        _pointList = new List<Point>();
+        _name = "Undefined name";
+        _duration = 0;
+        _fileText = file.text;
+        _readingStatus = new int[2] { 0, 0 };
+
+        threadReading = new Thread(readFile);
+        threadReading.Start();
     }
 }

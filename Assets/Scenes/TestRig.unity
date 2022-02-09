@@ -1656,6 +1656,7 @@ GameObject:
   - component: {fileID: 1872503803}
   - component: {fileID: 1872503802}
   - component: {fileID: 1872503806}
+  - component: {fileID: 1872503807}
   m_Layer: 0
   m_Name: MotionManager
   m_TagString: Untagged
@@ -1747,7 +1748,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1872503801}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f972658e93f9d941b0feb22fad1a0ee, type: 3}
   m_Name: 
@@ -1760,6 +1761,21 @@ MonoBehaviour:
   billBoard: {fileID: 8444102888320673402, guid: dd46d216001f042449deed51f5ff19db, type: 3}
   drawnMaterial: {fileID: 2100000, guid: 57775d7ae74ec494a870512b4c0e49e3, type: 2}
   undrawnMaterial: {fileID: 2100000, guid: f003ecf0bfe345d489c05bbae5c49f36, type: 2}
+--- !u!114 &1872503807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1872503801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78463dd050b0a3d439aff0139f752d6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  trajectoryFile: {fileID: 4900000, guid: 79023c331f645c0409778e10a9c52b59, type: 3}
+  scale: 0.001
+  loop: 0
 --- !u!1 &1958677864
 GameObject:
   m_ObjectHideFlags: 0
