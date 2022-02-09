@@ -12,9 +12,8 @@ public class FileInteraction : MonoBehaviour
     public float scale = 0.001f; //Ecart entre les points
     public float pointScale = 1.0f;
     public GameObject billBoard;
-
-    public bool showBoundary;
-    public Material workingZoneMaterial;
+    public Material drawnMaterial;
+    public Material undrawnMaterial;
 
     private List<Vector3> trajectoireFileCoord; //Vecteur des coordonnees du fichier
     private List<Vector3> trajectoireCoord; //Trajectoire mise a l'echelle pour unity
@@ -22,13 +21,17 @@ public class FileInteraction : MonoBehaviour
     private float tInit;
     private int stepMax;
     private bool isActive = true;
+    private List<GameObject> billBoardList;
+    private int previousStep;
 
     private void Start()
     {
         //Initializing variables
+        billBoardList = new List<GameObject>();
         trajectoireFileCoord = new List<Vector3>();
         trajectoireCoord = new List<Vector3>();
         initPos = transform.position;
+        previousStep = 0;
 
         //Reading file and adapting coordinates to unity
         readFile();
@@ -48,6 +51,7 @@ public class FileInteraction : MonoBehaviour
         {
             if (loop)
             {
+                previousStep = 0;
                 tInit = Time.time;
                 elapsedTime = 0.0f;
             }
@@ -64,15 +68,21 @@ public class FileInteraction : MonoBehaviour
             {
          
                 transform.position = Vector3.Lerp(trajectoireCoord[stepMax], trajectoireCoord[0], timeStep - step);
+                //reset Materials
+                resetMaterial();
+
+
 
             }
             else
             {
                 transform.position = Vector3.Lerp(trajectoireCoord[step], trajectoireCoord[step + 1], timeStep - step);
+                
+                //Change Material points
+                colorPoints(previousStep, step);
+
+                previousStep = step;
             }
-
-
-
         }
 
     }
@@ -119,34 +129,6 @@ public class FileInteraction : MonoBehaviour
             trajectoireCoord.Add(Coord);
         }
     }
-    private void drawWorkingZone()
-    {
-        int n = trajectoireCoord.Count;
-        float[] xValues = new float[n];
-        float[] yValues = new float[n];
-        float[] zValues = new float[n];
-
-        for (int i = 0; i < n; i++)
-        {
-            xValues[i] = trajectoireCoord[i].x;
-            yValues[i] = trajectoireCoord[i].y;
-            zValues[i] = trajectoireCoord[i].z;
-        }
-
-        Vector3 pointMin = new Vector3(Mathf.Min(xValues), Mathf.Min(yValues), Mathf.Min(zValues));
-        Vector3 pointMax = new Vector3(Mathf.Max(xValues), Mathf.Max(yValues), Mathf.Max(zValues));
-
-        //Assuming this is run on a unit cube.
-        Vector3 between = pointMax - pointMin;
-        float distance = between.magnitude;
-
-        GameObject boundingCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        boundingCube.transform.localScale = new Vector3(distance, distance, distance);
-        boundingCube.transform.position = pointMin + (between / 2.0f);
-        boundingCube.transform.LookAt(pointMax);
-        boundingCube.GetComponent<Renderer>().material = workingZoneMaterial;
-
-    }
 
     private void showTrajectoryPoints()
     {
@@ -159,11 +141,33 @@ public class FileInteraction : MonoBehaviour
             {
                 GameObject point = Object.Instantiate(billBoard);
                 point.transform.position = pointCoord;
+                point.transform.localScale = new Vector3(pointScale, pointScale, pointScale);
                 point.transform.SetParent(pointsHolder.transform);
+                billBoardList.Add(point);
             }
             count++;
             
 
+        }
+    }
+
+    private void colorPoints(int previousStep, int step)
+    {
+        for (int i = previousStep; i < step; i++)
+        {
+            if (i % 10 == 0)
+            {
+                billBoardList[i%10].transform.GetChild(0).gameObject.GetComponent<MeshRenderer>().material = drawnMaterial;
+            }
+        }
+    }
+
+    private void resetMaterial()
+    {
+        foreach(GameObject billBoard in billBoardList)
+        {
+            
+            billBoard.transform.GetChild(0).gameObject.GetComponent<MeshRenderer>().material = undrawnMaterial;
         }
     }
 }

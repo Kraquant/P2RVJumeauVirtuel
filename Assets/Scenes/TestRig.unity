@@ -1756,10 +1756,10 @@ MonoBehaviour:
   loop: 1
   duration: 10000
   scale: 0.01
-  pointScale: 0.001
+  pointScale: 1
   billBoard: {fileID: 8444102888320673402, guid: dd46d216001f042449deed51f5ff19db, type: 3}
-  showBoundary: 0
-  workingZoneMaterial: {fileID: 2100000, guid: 315a1c34116f8564aaf71e6b8d228912, type: 2}
+  drawnMaterial: {fileID: 2100000, guid: 57775d7ae74ec494a870512b4c0e49e3, type: 2}
+  undrawnMaterial: {fileID: 2100000, guid: f003ecf0bfe345d489c05bbae5c49f36, type: 2}
 --- !u!1 &1958677864
 GameObject:
   m_ObjectHideFlags: 0
