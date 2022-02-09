@@ -8,26 +8,35 @@ public class FileInteraction : MonoBehaviour
 {
     public TextAsset trajectoireFile;
     public bool loop = true;
-    public float duration = 5.0f;
-    public float scale = 1.0f;
+    public float duration = 10000f; //Temps de l'animation
+    public float scale = 0.001f; //Ecart entre les points
+    public float pointScale = 1.0f;
+    public GameObject billBoard;
+
     public bool showBoundary;
     public Material workingZoneMaterial;
 
-    private List<Vector3> trajectoireFileCoord;
-    private List<Vector3> trajectoireCoord;
-    private Vector3 initPos;
+    private List<Vector3> trajectoireFileCoord; //Vecteur des coordonnees du fichier
+    private List<Vector3> trajectoireCoord; //Trajectoire mise a l'echelle pour unity
+    private Vector3 initPos; //Position de départ de la trajectoire
     private float tInit;
     private int stepMax;
     private bool isActive = true;
 
     private void Start()
     {
+        //Initializing variables
         trajectoireFileCoord = new List<Vector3>();
         trajectoireCoord = new List<Vector3>();
         initPos = transform.position;
+
+        //Reading file and adapting coordinates to unity
         readFile();
         calculateWorkingZone();
         //drawWorkingZone();
+        showTrajectoryPoints();
+
+        //Setting up time
         tInit = Time.time;
         stepMax = trajectoireCoord.Count;
     }
@@ -50,10 +59,10 @@ public class FileInteraction : MonoBehaviour
         if (isActive)
         {
             float timeStep = stepMax * elapsedTime / duration;
-            int step = Mathf.RoundToInt(timeStep);
-
+            int step = Mathf.FloorToInt(timeStep);
             if (step == stepMax)
             {
+         
                 transform.position = Vector3.Lerp(trajectoireCoord[stepMax], trajectoireCoord[0], timeStep - step);
 
             }
@@ -95,7 +104,7 @@ public class FileInteraction : MonoBehaviour
                 float.TryParse(xS, out xF);
                 float.TryParse(yS, out yF);
                 float.TryParse(zS, out zF);
-                trajectoireFileCoord.Add(new Vector3(xF, yF, zF));
+                trajectoireFileCoord.Add(new Vector3(xF, -zF, yF));
             }
 
         }
@@ -110,7 +119,6 @@ public class FileInteraction : MonoBehaviour
             trajectoireCoord.Add(Coord);
         }
     }
-
     private void drawWorkingZone()
     {
         int n = trajectoireCoord.Count;
@@ -138,5 +146,24 @@ public class FileInteraction : MonoBehaviour
         boundingCube.transform.LookAt(pointMax);
         boundingCube.GetComponent<Renderer>().material = workingZoneMaterial;
 
+    }
+
+    private void showTrajectoryPoints()
+    {
+        GameObject pointsHolder = new GameObject();
+        pointsHolder.name = "CoordinatesPoints";
+        int count = 0;
+        foreach(Vector3 pointCoord in trajectoireCoord)
+        {
+            if (count % 10 == 0)
+            {
+                GameObject point = Object.Instantiate(billBoard);
+                point.transform.position = pointCoord;
+                point.transform.SetParent(pointsHolder.transform);
+            }
+            count++;
+            
+
+        }
     }
 }
