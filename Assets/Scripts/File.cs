@@ -14,6 +14,7 @@ public class File
     private string _fileText;
     private Thread threadReading;
     private int[] _readingStatus;
+    private int _maxLevel;
 
     //Properties
     public int Duration
@@ -72,12 +73,27 @@ public class File
             return _readingStatus;
         }
     }
+    public int maxLevel {
+        get
+        {
+            if (threadReading.IsAlive)
+            {
+                Debug.LogError("Error: You tried to access maxLevel but the value is currently edited on a separate thread.");
+                return 0;
+            }
+            else
+            {
+                return _maxLevel;
+            }
+        }
+    }
 
     public File()
     {
         _pointList = new List<Point>();
         _name = "Undefined name";
         _duration = 0;
+        _maxLevel = 0;
         _readingStatus = new int[2] { 0, 0 };
     }
 
@@ -86,6 +102,7 @@ public class File
         _pointList = new List<Point>();
         _name = "Undefined name";
         _duration = 0;
+        _maxLevel = 0;
         _readingStatus = new int[2] { 0, 0 };
 
         _fileText = file.text;
@@ -100,10 +117,11 @@ public class File
 
         string[] fileLines =Regex.Split(_fileText, "\\n");
         _readingStatus[1] = fileLines.Length;
+        
 
         //Regex patterns #################################################################################
         string patternX = "(?<=X)[\\d\\-]?\\w+[\\.]?\\w+[\\.]?(?=\\s)";
-        string patternY = "(?<=X)[\\d\\-]?\\w+[\\.]?\\w+[\\.]?(?=\\s)";
+        string patternY = "(?<=Y)[\\d\\-]?\\w+[\\.]?\\w+[\\.]?(?=\\s)";
         string patternZ = "(?<=Z)[\\d\\-]?\\w+[\\.]?\\w+[\\.]?(?=\\s)";
 
         string patternA3 = "(?<=A3=)[\\d\\-]?\\w+[\\.]?\\w+[\\.]?(?=\\s)";
@@ -174,6 +192,7 @@ public class File
             if (levelLine.Success)
             {
                 int.TryParse(levelLine.Value, out levelState);
+                if (levelState > _maxLevel) _maxLevel = levelState;
             }
             if (arcLine.Success)
             {
@@ -249,8 +268,8 @@ public class File
                 int.TryParse(NLine.Value, out nInt);
 
                 
-                Vector3 coords = new Vector3(xF, yF, zF);
-                Vector3 normal = new Vector3(aF, bF, cF);
+                Vector3 coords = new Vector3(xF, -zF, yF);
+                Vector3 normal = new Vector3(aF, -cF, bF);
                 Vector2 positionneur = new Vector2(e1F, e2F);
                 _pointList.Add(new Point(nInt, levelState, arcState, coords, normal, positionneur, FState));
 
@@ -291,6 +310,7 @@ public class File
         _pointList = new List<Point>();
         _name = "Undefined name";
         _duration = 0;
+        _maxLevel = 0;
         _fileText = file.text;
         _readingStatus = new int[2] { 0, 0 };
 
