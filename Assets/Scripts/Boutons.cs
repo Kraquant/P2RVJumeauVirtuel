@@ -30,6 +30,12 @@ public class Boutons : MonoBehaviour
         }
     }
 
+    public void OnClick()
+    {
+        Collider mouse = new Collider();
+        OnTriggerEnter(mouse);
+    }
+
     private void OnTriggerStay(Collider other)
     {
         string bouton = this.name;
