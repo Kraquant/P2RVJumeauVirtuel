@@ -6,6 +6,20 @@ public class Boutons : MonoBehaviour
 {
     public GameObject pendant;
 
+    public void OnClick()
+    {
+        Collider mouse = new Collider();
+        OnTriggerEnter(mouse);
+        //int loop = 0;
+        //while (!Input.GetMouseButtonUp(0) && loop < 1000) { Debug.Log(loop);  OnTriggerStay(mouse); loop += 1; }
+    }
+
+    public void OnLongClick()
+    {
+        Collider mouse = new Collider();
+        OnTriggerStay(mouse);
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         string bouton = this.name;
@@ -30,12 +44,6 @@ public class Boutons : MonoBehaviour
         }
     }
 
-    public void OnClick()
-    {
-        Collider mouse = new Collider();
-        OnTriggerEnter(mouse);
-    }
-
     private void OnTriggerStay(Collider other)
     {
         string bouton = this.name;
@@ -48,16 +56,5 @@ public class Boutons : MonoBehaviour
                 pendant.GetComponent<Pendant>().OnBMoinsTriggerStay();
                 break;
         }
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

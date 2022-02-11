@@ -8,11 +8,11 @@ public class Pendant : MonoBehaviour
     public int axe;
     public float pas_angle;
     public float pas_pos;
-    public float pas_angle_continu;
-    public float pas_pos_continu;
+    public float pas_angle_rap;
+    public float pas_pos_rap;
 
-    public float smoothTime = 0.3F;
-    public Vector3 velocity = Vector3.zero;
+    public float smoothTime;
+    public Vector3 velocity;
 
     private float posX;
     private float posY;
@@ -34,8 +34,14 @@ public class Pendant : MonoBehaviour
     private GameObject axe4;
     private GameObject axe5;
 
+    private float pressTime;
+    private float delay;
+    private float pas_pos_current;
+    private float pas_angle_current;
+
     public enum Mode { COORDS, AXES, AUTO }
     public Mode mode;
+    
 
     public float PosX { get => posX; set => posX = value; }
     public float PosY { get => posY; set => posY = value; }
@@ -62,11 +68,14 @@ public class Pendant : MonoBehaviour
 
         mode = Mode.COORDS;
         axe = 0;
-        pas_angle_continu = 0.5f;
-        pas_pos_continu = 0.025f;
-        pas_angle = 2;
-        pas_pos = 0.1f;
-        
+        pas_angle_rap = 10;
+        pas_pos_rap = 0.5f;
+        pas_angle = 1;
+        pas_pos = 0.05f;
+
+        pressTime = 0;
+        delay = 1;
+
         posX = 0;
         posY = 0;
         posZ = 0;
@@ -129,88 +138,49 @@ public class Pendant : MonoBehaviour
 
     public void OnBMoinsTriggerEnter()
     {
-        switch (axe)
-        {
-            case 0:
-                if (mode == Mode.COORDS) { posX = -pas_pos; }
-                else if (mode == Mode.AXES) { angle0 = -pas_angle; }
-                break;
-            case 1:
-                if (mode == Mode.COORDS) { posY = -pas_pos; }
-                else if (mode == Mode.AXES) { angle1 = -pas_angle; }
-                break;
-            case 2:
-                if (mode == Mode.COORDS) { posZ = -pas_pos; }
-                else if (mode == Mode.AXES) { angle2 = -pas_angle; }
-                break;
-            case 3:
-                if (mode == Mode.AXES) { angle3 = -pas_angle; }
-                break;
-            case 4:
-                if (mode == Mode.AXES) { angle4 = -pas_angle; }
-                break;
-            case 5:
-                if (mode == Mode.AXES) { angle5 = -pas_angle; }
-                break;
-            default:
-                break;
-        }
+        pressTime = Time.time;
     }
 
     public void OnBPlusTriggerEnter()
     {
-        switch (axe)
-                {
-                    case 0:
-                        if (mode == Mode.COORDS) { posX = pas_pos; }
-                        else if (mode == Mode.AXES) { angle0 = pas_angle; }
-                        break;
-                    case 1:
-                        if (mode == Mode.COORDS) { posY = pas_pos; }
-                        else if (mode == Mode.AXES) { angle1 = pas_angle; }
-                        break;
-                    case 2:
-                        if (mode == Mode.COORDS) { posZ = pas_pos; }
-                        else if (mode == Mode.AXES) { angle2 = pas_angle; }
-                        break;
-                    case 3:
-                        if (mode == Mode.AXES) { angle3 = pas_angle; }
-                        break;
-                    case 4:
-                        if (mode == Mode.AXES) { angle4 = pas_angle; }
-                        break;
-                    case 5:
-                        if (mode == Mode.AXES) { angle5 = pas_angle; }
-                        break;
-                    default:
-                        break;
-                }
+        pressTime = Time.time;
     }
 
     public void OnBMoinsTriggerStay()
     {
+        Debug.Log(Time.time - pressTime);
+        if (Time.time - pressTime < delay)
+        {
+            pas_pos_current = pas_pos;
+            pas_angle_current = pas_angle;
+        }
+        else
+        {
+            pas_pos_current = pas_pos_rap;
+            pas_angle_current = pas_angle_rap;
+        }
         switch (axe)
         {
             case 0:
-                if (mode == Mode.COORDS) { posX = -pas_pos_continu; }
-                else if (mode == Mode.AXES) { angle0 = -pas_angle_continu; }
+                if (mode == Mode.COORDS) { posX = -pas_pos_current; }
+                else if (mode == Mode.AXES) { angle0 = -pas_angle_current; }
                 break;
             case 1:
-                if (mode == Mode.COORDS) { posY = -pas_pos_continu; }
-                else if (mode == Mode.AXES) { angle1 = -pas_angle_continu; }
+                if (mode == Mode.COORDS) { posY = -pas_pos_current; }
+                else if (mode == Mode.AXES) { angle1 = -pas_angle_current; }
                 break;
             case 2:
-                if (mode == Mode.COORDS) { posZ = -pas_pos_continu; }
-                else if (mode == Mode.AXES) { angle2 = -pas_angle_continu; }
+                if (mode == Mode.COORDS) { posZ = -pas_pos_current; }
+                else if (mode == Mode.AXES) { angle2 = -pas_angle_current; }
                 break;
             case 3:
-                if (mode == Mode.AXES) { angle3 = -pas_angle_continu; }
+                if (mode == Mode.AXES) { angle3 = -pas_angle_current; }
                 break;
             case 4:
-                if (mode == Mode.AXES) { angle4 = -pas_angle_continu; }
+                if (mode == Mode.AXES) { angle4 = -pas_angle_current; }
                 break;
             case 5:
-                if (mode == Mode.AXES) { angle5 = -pas_angle_continu; }
+                if (mode == Mode.AXES) { angle5 = -pas_angle_current; }
                 break;
             default:
                 break;
@@ -219,32 +189,43 @@ public class Pendant : MonoBehaviour
 
     public void OnBPlusTriggerStay()
     {
+        Debug.Log(Time.time - pressTime);
+        if (Time.time - pressTime < delay)
+        {
+            pas_pos_current = pas_pos;
+            pas_angle_current = pas_angle;
+        }
+        else
+        {
+            pas_pos_current = pas_pos_rap;
+            pas_angle_current = pas_angle_rap;
+        }
         switch (axe)
-                {
-                    case 0:
-                        if (mode == Mode.COORDS) { posX = pas_pos_continu; }
-                        else if (mode == Mode.AXES) { angle0 = pas_angle_continu; }
-                        break;
-                    case 1:
-                        if (mode == Mode.COORDS) { posY = pas_pos_continu; }
-                        else if (mode == Mode.AXES) { angle1 = pas_angle_continu; }
-                        break;
-                    case 2:
-                        if (mode == Mode.COORDS) { posZ = pas_pos_continu; }
-                        else if (mode == Mode.AXES) { angle2 = pas_angle_continu; }
-                        break;
-                    case 3:
-                        if (mode == Mode.AXES) { angle3 = pas_angle_continu; }
-                        break;
-                    case 4:
-                        if (mode == Mode.AXES) { angle4 = pas_angle_continu; }
-                        break;
-                    case 5:
-                        if (mode == Mode.AXES) { angle5 = pas_angle_continu; }
-                        break;
-                    default:
-                        break;
-                }
+        {
+            case 0:
+                if (mode == Mode.COORDS) { posX = pas_pos_current; }
+                else if (mode == Mode.AXES) { angle0 = pas_angle_current; }
+                break;
+            case 1:
+                if (mode == Mode.COORDS) { posY = pas_pos_current; }
+                else if (mode == Mode.AXES) { angle1 = pas_angle_current; }
+                break;
+            case 2:
+                if (mode == Mode.COORDS) { posZ = pas_pos_current; }
+                else if (mode == Mode.AXES) { angle2 = pas_angle_current; }
+                break;
+            case 3:
+                if (mode == Mode.AXES) { angle3 = pas_angle_current; }
+                break;
+            case 4:
+                if (mode == Mode.AXES) { angle4 = pas_angle_current; }
+                break;
+            case 5:
+                if (mode == Mode.AXES) { angle5 = pas_angle_current; }
+                break;
+            default:
+                break;
+        }
     }
 
     // Update is called once per frame
@@ -252,7 +233,9 @@ public class Pendant : MonoBehaviour
     {
         if (mode == Mode.COORDS)
         {
-            cible.transform.position += new Vector3(posX, posY, posZ);
+            //cible.transform.position += new Vector3(posX, posY, posZ);
+
+            cible.transform.position = Vector3.SmoothDamp(cible.transform.position, cible.transform.position + new Vector3(posX, posY, posZ), ref velocity, smoothTime);
 
             posX = 0;
             posY = 0;
@@ -265,12 +248,12 @@ public class Pendant : MonoBehaviour
             if (angle2 < -155 + pas_angle) { angle2 = 0; }
             if (angle2 > 165 - pas_angle) { angle2 = 0; }
 
-            axe0.transform.localEulerAngles = Vector3.SmoothDamp(axe0.transform.localEulerAngles, axe0.transform.localEulerAngles + new Vector3(0, angle0, 0), ref velocity, smoothTime);
-            axe1.transform.localEulerAngles = Vector3.SmoothDamp(axe1.transform.localEulerAngles, axe1.transform.localEulerAngles + new Vector3(0, 0, angle1), ref velocity, smoothTime);
-            axe2.transform.localEulerAngles = Vector3.SmoothDamp(axe2.transform.localEulerAngles, axe2.transform.localEulerAngles + new Vector3(0, 0, angle2), ref velocity, smoothTime);
-            axe3.transform.localEulerAngles = Vector3.SmoothDamp(axe3.transform.localEulerAngles, axe3.transform.localEulerAngles + new Vector3(0, angle3, 0), ref velocity, smoothTime);
-            axe4.transform.localEulerAngles = Vector3.SmoothDamp(axe4.transform.localEulerAngles, axe4.transform.localEulerAngles + new Vector3(0, 0, angle4), ref velocity, smoothTime);
-            axe5.transform.localEulerAngles = Vector3.SmoothDamp(axe5.transform.localEulerAngles, axe5.transform.localEulerAngles + new Vector3(0, angle5, 0), ref velocity, smoothTime);
+            axe0.transform.localEulerAngles = Vector3.Lerp(axe0.transform.localEulerAngles, axe0.transform.localEulerAngles + new Vector3(0, angle0, 0), Time.deltaTime * 10);
+            axe1.transform.localEulerAngles = Vector3.Lerp(axe1.transform.localEulerAngles, axe1.transform.localEulerAngles + new Vector3(0, 0, angle1), Time.deltaTime * 10);
+            axe2.transform.localEulerAngles = Vector3.Lerp(axe2.transform.localEulerAngles, axe2.transform.localEulerAngles + new Vector3(0, 0, angle2), Time.deltaTime * 10);
+            axe3.transform.localEulerAngles = Vector3.Lerp(axe3.transform.localEulerAngles, axe3.transform.localEulerAngles + new Vector3(0, angle3, 0), Time.deltaTime * 10);
+            axe4.transform.localEulerAngles = Vector3.Lerp(axe4.transform.localEulerAngles, axe4.transform.localEulerAngles + new Vector3(0, 0, angle4), Time.deltaTime * 10);
+            axe5.transform.localEulerAngles = Vector3.Lerp(axe5.transform.localEulerAngles, axe5.transform.localEulerAngles + new Vector3(0, angle5, 0), Time.deltaTime * 10);
 
             //axe0.transform.localEulerAngles += new Vector3(0, angle0, 0);
             //axe1.transform.localEulerAngles += new Vector3(0, 0, angle1);
