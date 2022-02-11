@@ -1618,7 +1618,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1769489170}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.47, y: 1.062, z: 3.48}
+  m_LocalPosition: {x: -1.13, y: 1.062, z: 3.48}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1788,13 +1788,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trajectoryFile: {fileID: 4900000, guid: 79023c331f645c0409778e10a9c52b59, type: 3}
-  scale: 0.001
+  scale: 0.01
   loop: 1
   dotMainCol: {r: 0, g: 1, b: 0.72599363, a: 1}
   pointResolution: 10
   _duration: 50
   _billBoard: {fileID: 8444102888320673402, guid: dd46d216001f042449deed51f5ff19db, type: 3}
-  _pointScale: 0.1
+  _pointScale: 1
 --- !u!1 &1958677864
 GameObject:
   m_ObjectHideFlags: 0
@@ -2217,6 +2217,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4133823974317355876, guid: be1c63b5c88c09c4694fdb2921669b1c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4527510147581383828, guid: be1c63b5c88c09c4694fdb2921669b1c, type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4527510147581383828, guid: be1c63b5c88c09c4694fdb2921669b1c, type: 3}
