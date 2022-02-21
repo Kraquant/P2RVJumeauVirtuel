@@ -101,7 +101,7 @@ public class Ecran : MonoBehaviour
                         break;
                 }
 
-                txtCoords.text = "X : " + posX + "\nY : " + posY + "\nZ : " + posZ;
+                txtCoords.text = "\nX : " + posX + "\nY : " + posY + "\nZ : " + posZ;
                 break;
             case Mode.AXES:
                 switch (axe)
@@ -127,7 +127,7 @@ public class Ecran : MonoBehaviour
                 }
                 txtMode.text = "Mode\nAXES\n\n\nAxe n°" + (axe + 1) + "\nValeur : " + angle;
 
-                txtCoords.text = "X : " + posX + "\nY : " + posY + "\nZ : " + posZ;
+                txtCoords.text = "\nX : " + posX + "\nY : " + posY + "\nZ : " + posZ;
                 break;
             case Mode.AUTO:
                 txtMode.text = "Mode\nAUTO";
@@ -137,7 +137,7 @@ public class Ecran : MonoBehaviour
                 }
                 txtMode.text += "=>";
 
-                txtCoords.text = "";
+                txtCoords.text = "\n";
                 for (int i = 0; i < trajectoires.Count; i++)
                     txtCoords.text += "\n" + trajectoires[i];
                 break;
