@@ -26,6 +26,9 @@ public class Pendant : MonoBehaviour
     private float angle4;
     private float angle5;
 
+    private float limit1;
+    private float limit2;
+
     private GameObject finalIK;
     private GameObject cible;
     private GameObject axe0;
@@ -86,7 +89,10 @@ public class Pendant : MonoBehaviour
         angle3 = 0;
         angle4 = 0;
         angle5 = 0;
-    }
+
+        limit1 = 0;
+        limit2 = 0;
+}
 
     public void OnBBasTriggerEnter()
     {
@@ -259,14 +265,24 @@ public class Pendant : MonoBehaviour
         }
         else if (mode == Mode.AXES)
         {
-            if (angle1 < -50 + pas_angle) { angle1 = 0; }
-            if (angle1 > 160 - pas_angle) { angle1 = 0; }
-            if (angle2 < -155 + pas_angle) { angle2 = 0; }
-            if (angle2 > 165 - pas_angle) { angle2 = 0; }
+            limit1 = axe1.transform.localEulerAngles.z;
+            limit2 = axe2.transform.localEulerAngles.z;
+
+            if (limit1 + angle1 < 309 && limit1 + angle1 > 161)
+            {
+                if (limit1 + angle1 > 235) { axe1.transform.localEulerAngles = Vector3.Lerp(axe1.transform.localEulerAngles, new Vector3(0, 0, 310), Time.deltaTime * 10); }
+                else { axe1.transform.localEulerAngles = Vector3.Lerp(axe1.transform.localEulerAngles, new Vector3(0, 0, 160), Time.deltaTime * 10); }
+            }
+            else { axe1.transform.localEulerAngles = Vector3.Lerp(axe1.transform.localEulerAngles, axe1.transform.localEulerAngles + new Vector3(0, 0, angle1), Time.deltaTime * 10); }
+
+            if (limit2 + angle2 < 206 && limit2 + angle2 > 164)
+            {
+                if (limit2 + angle2 > 185) { axe2.transform.localEulerAngles = Vector3.Lerp(axe2.transform.localEulerAngles, new Vector3(0, 0, 205), Time.deltaTime * 10); }
+                else { axe2.transform.localEulerAngles = Vector3.Lerp(axe2.transform.localEulerAngles, new Vector3(0, 0, 165), Time.deltaTime * 10); }
+            }
+            else { axe2.transform.localEulerAngles = Vector3.Lerp(axe2.transform.localEulerAngles, axe2.transform.localEulerAngles + new Vector3(0, 0, angle2), Time.deltaTime * 10); }
 
             axe0.transform.localEulerAngles = Vector3.Lerp(axe0.transform.localEulerAngles, axe0.transform.localEulerAngles + new Vector3(0, angle0, 0), Time.deltaTime * 10);
-            axe1.transform.localEulerAngles = Vector3.Lerp(axe1.transform.localEulerAngles, axe1.transform.localEulerAngles + new Vector3(0, 0, angle1), Time.deltaTime * 10);
-            axe2.transform.localEulerAngles = Vector3.Lerp(axe2.transform.localEulerAngles, axe2.transform.localEulerAngles + new Vector3(0, 0, angle2), Time.deltaTime * 10);
             axe3.transform.localEulerAngles = Vector3.Lerp(axe3.transform.localEulerAngles, axe3.transform.localEulerAngles + new Vector3(0, angle3, 0), Time.deltaTime * 10);
             axe4.transform.localEulerAngles = Vector3.Lerp(axe4.transform.localEulerAngles, axe4.transform.localEulerAngles + new Vector3(0, 0, angle4), Time.deltaTime * 10);
             axe5.transform.localEulerAngles = Vector3.Lerp(axe5.transform.localEulerAngles, axe5.transform.localEulerAngles + new Vector3(0, angle5, 0), Time.deltaTime * 10);
