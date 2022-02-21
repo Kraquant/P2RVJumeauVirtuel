@@ -146,6 +146,21 @@ public class Pendant : MonoBehaviour
         pressTime = Time.time;
     }
 
+    public void OnBPlayTriggerEnter()
+    {
+        // runFileRead = !runFileRead;
+        // readSpeedFactor = 1;
+    }
+
+    public void OnBFForwardTriggerEnter()
+    {
+        // if (readSpeedFactor != 64) {
+        // readSpeedFactor = 2*readSpeedFactor
+        // } else {
+        // readSpeedFactor = 2;
+        // }
+    }
+
     public void OnBMoinsTriggerStay()
     {
         Debug.Log(Time.time - pressTime);
@@ -226,6 +241,11 @@ public class Pendant : MonoBehaviour
             default:
                 break;
         }
+    }
+
+    public void OnBFForwardTriggerStay()
+    {
+        // Delay puis vitesse x4 avec palier à 64 ?
     }
 
     // Update is called once per frame

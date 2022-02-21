@@ -6,6 +6,8 @@ public class Boutons : MonoBehaviour
 {
     public GameObject pendant;
 
+
+    // Pour l'interaction 2D uniquement **********************************
     public void OnClick()
     {
         Collider mouse = new Collider();
@@ -19,6 +21,8 @@ public class Boutons : MonoBehaviour
         Collider mouse = new Collider();
         OnTriggerStay(mouse);
     }
+
+    // Interactions 2D et 3D *********************************
 
     private void OnTriggerEnter(Collider other)
     {
@@ -41,6 +45,12 @@ public class Boutons : MonoBehaviour
             case "Bouton moins":
                 pendant.GetComponent<Pendant>().OnBMoinsTriggerEnter();
                 break;
+            case "Bouton play":
+                pendant.GetComponent<Pendant>().OnBPlayTriggerEnter();
+                break;
+            case "Bouton fforward":
+                pendant.GetComponent<Pendant>().OnBFForwardTriggerEnter();
+                break;
         }
     }
 
@@ -54,6 +64,9 @@ public class Boutons : MonoBehaviour
                 break;
             case "Bouton moins":
                 pendant.GetComponent<Pendant>().OnBMoinsTriggerStay();
+                break;
+            case "Bouton fforward":
+                pendant.GetComponent<Pendant>().OnBFForwardTriggerStay();
                 break;
         }
     }
