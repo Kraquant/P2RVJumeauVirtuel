@@ -5,6 +5,7 @@ using RootMotion.FinalIK;
 
 public class Pendant : MonoBehaviour
 {
+    public List<string> trajectoires;
     public int axe;
     public float pas_angle;
     public float pas_pos;
@@ -25,6 +26,9 @@ public class Pendant : MonoBehaviour
     private float angle4;
     private float angle5;
 
+    private float limit1;
+    private float limit2;
+
     private GameObject finalIK;
     private GameObject cible;
     private GameObject axe0;
@@ -41,7 +45,6 @@ public class Pendant : MonoBehaviour
 
     public enum Mode { COORDS, AXES, AUTO }
     public Mode mode;
-    
 
     public float PosX { get => posX; set => posX = value; }
     public float PosY { get => posY; set => posY = value; }
@@ -68,8 +71,8 @@ public class Pendant : MonoBehaviour
 
         mode = Mode.COORDS;
         axe = 0;
-        pas_angle_rap = 10;
-        pas_pos_rap = 0.5f;
+        pas_angle_rap = 3;
+        pas_pos_rap = 0.15f;
         pas_angle = 1;
         pas_pos = 0.05f;
 
@@ -86,19 +89,41 @@ public class Pendant : MonoBehaviour
         angle3 = 0;
         angle4 = 0;
         angle5 = 0;
-    }
+
+        limit1 = 0;
+        limit2 = 0;
+}
 
     public void OnBBasTriggerEnter()
     {
-        axe -= 1;
-        if (axe < 0 && mode == Mode.COORDS) { axe = 2; }
-        else if (axe < 0 && mode == Mode.AXES) { axe = 5; }
+        if (mode != Mode.AUTO)
+        {
+            axe -= 1;
+            if (axe < 0)
+            {
+                if (mode == Mode.COORDS) { axe = 2; }
+                else { axe = 5; }
+            }
+        }
+        else
+        {
+            axe += 1;
+            if (axe > trajectoires.Count - 1) { axe = 0; }
+        }
     }
 
     public void OnBHautTriggerEnter()
     {
-        axe += 1;
-        if ((axe > 5 && mode == Mode.AXES) || (axe > 2 && mode == Mode.COORDS)) { axe = 0; }
+        if (mode != Mode.AUTO)
+        {
+            axe += 1;
+            if ((axe > 5 && mode == Mode.AXES) || (axe > 2 && mode == Mode.COORDS)) { axe = 0; }
+        }
+        else
+        {
+            axe -= 1;
+            if (axe < 0) { axe = trajectoires.Count - 1; }
+        }
     }
 
     public void OnBModeTriggerEnter()
@@ -119,7 +144,6 @@ public class Pendant : MonoBehaviour
         }
         else if (mode == Mode.AXES)
         {
-            //cible.transform.position = endBone.transform.position;
             cible.transform.SetParent(null);
             finalIK.GetComponent<CCDIK>().enabled = true;
 
@@ -253,8 +277,6 @@ public class Pendant : MonoBehaviour
     {
         if (mode == Mode.COORDS)
         {
-            //cible.transform.position += new Vector3(posX, posY, posZ);
-
             cible.transform.position = Vector3.SmoothDamp(cible.transform.position, cible.transform.position + new Vector3(posX, posY, posZ), ref velocity, smoothTime);
 
             posX = 0;
@@ -263,24 +285,27 @@ public class Pendant : MonoBehaviour
         }
         else if (mode == Mode.AXES)
         {
-            if (angle1 < -50 + pas_angle) { angle1 = 0; }
-            if (angle1 > 160 - pas_angle) { angle1 = 0; }
-            if (angle2 < -155 + pas_angle) { angle2 = 0; }
-            if (angle2 > 165 - pas_angle) { angle2 = 0; }
+            limit1 = axe1.transform.localEulerAngles.z;
+            limit2 = axe2.transform.localEulerAngles.z;
+
+            if (limit1 + angle1 < 309 && limit1 + angle1 > 161)
+            {
+                if (limit1 + angle1 > 235) { axe1.transform.localEulerAngles = Vector3.Lerp(axe1.transform.localEulerAngles, new Vector3(0, 0, 310), Time.deltaTime * 10); }
+                else { axe1.transform.localEulerAngles = Vector3.Lerp(axe1.transform.localEulerAngles, new Vector3(0, 0, 160), Time.deltaTime * 10); }
+            }
+            else { axe1.transform.localEulerAngles = Vector3.Lerp(axe1.transform.localEulerAngles, axe1.transform.localEulerAngles + new Vector3(0, 0, angle1), Time.deltaTime * 10); }
+
+            if (limit2 + angle2 < 206 && limit2 + angle2 > 164)
+            {
+                if (limit2 + angle2 > 185) { axe2.transform.localEulerAngles = Vector3.Lerp(axe2.transform.localEulerAngles, new Vector3(0, 0, 205), Time.deltaTime * 10); }
+                else { axe2.transform.localEulerAngles = Vector3.Lerp(axe2.transform.localEulerAngles, new Vector3(0, 0, 165), Time.deltaTime * 10); }
+            }
+            else { axe2.transform.localEulerAngles = Vector3.Lerp(axe2.transform.localEulerAngles, axe2.transform.localEulerAngles + new Vector3(0, 0, angle2), Time.deltaTime * 10); }
 
             axe0.transform.localEulerAngles = Vector3.Lerp(axe0.transform.localEulerAngles, axe0.transform.localEulerAngles + new Vector3(0, angle0, 0), Time.deltaTime * 10);
-            axe1.transform.localEulerAngles = Vector3.Lerp(axe1.transform.localEulerAngles, axe1.transform.localEulerAngles + new Vector3(0, 0, angle1), Time.deltaTime * 10);
-            axe2.transform.localEulerAngles = Vector3.Lerp(axe2.transform.localEulerAngles, axe2.transform.localEulerAngles + new Vector3(0, 0, angle2), Time.deltaTime * 10);
             axe3.transform.localEulerAngles = Vector3.Lerp(axe3.transform.localEulerAngles, axe3.transform.localEulerAngles + new Vector3(0, angle3, 0), Time.deltaTime * 10);
             axe4.transform.localEulerAngles = Vector3.Lerp(axe4.transform.localEulerAngles, axe4.transform.localEulerAngles + new Vector3(0, 0, angle4), Time.deltaTime * 10);
             axe5.transform.localEulerAngles = Vector3.Lerp(axe5.transform.localEulerAngles, axe5.transform.localEulerAngles + new Vector3(0, angle5, 0), Time.deltaTime * 10);
-
-            //axe0.transform.localEulerAngles += new Vector3(0, angle0, 0);
-            //axe1.transform.localEulerAngles += new Vector3(0, 0, angle1);
-            //axe2.transform.localEulerAngles += new Vector3(0, 0, angle2);
-            //axe3.transform.localEulerAngles += new Vector3(0, angle3, 0);
-            //axe4.transform.localEulerAngles += new Vector3(0, 0, angle4);
-            //axe5.transform.localEulerAngles += new Vector3(0, angle5, 0);
 
             angle0 = 0;
             angle1 = 0;

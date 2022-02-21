@@ -9,6 +9,8 @@ public class Ecran : MonoBehaviour
     public Text txtMode;
     public Text txtCoords;
 
+    private List<string> trajectoires;
+
     private float angle;
 
     private GameObject cible;
@@ -32,6 +34,7 @@ public class Ecran : MonoBehaviour
     void Start()
     {
         Pendant pendant = pendantObject.GetComponent<Pendant>();
+        trajectoires = pendant.trajectoires;
 
         cible = GameObject.Find("Sphere");
         axe0 = GameObject.Find("OsBras1");
@@ -97,6 +100,8 @@ public class Ecran : MonoBehaviour
                         txtMode.text = "Mode\nCOORDS\n\n\nDim. : Z\nValeur : " + posZ;
                         break;
                 }
+
+                txtCoords.text = "\nX : " + posX + "\nY : " + posY + "\nZ : " + posZ;
                 break;
             case Mode.AXES:
                 switch (axe)
@@ -121,11 +126,21 @@ public class Ecran : MonoBehaviour
                         break;
                 }
                 txtMode.text = "Mode\nAXES\n\n\nAxe n°" + (axe + 1) + "\nValeur : " + angle;
+
+                txtCoords.text = "\nX : " + posX + "\nY : " + posY + "\nZ : " + posZ;
                 break;
             case Mode.AUTO:
                 txtMode.text = "Mode\nAUTO";
+                for (int i = 0; i < axe + 1; i++)
+                {
+                    txtMode.text += "\n";
+                }
+                txtMode.text += "=>";
+
+                txtCoords.text = "\n";
+                for (int i = 0; i < trajectoires.Count; i++)
+                    txtCoords.text += "\n" + trajectoires[i];
                 break;
         }
-        txtCoords.text = "X : " + posX + "\nY : " + posY + "\nZ : " + posZ;
     }
 }
