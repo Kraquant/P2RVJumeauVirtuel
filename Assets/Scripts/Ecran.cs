@@ -79,6 +79,7 @@ public class Ecran : MonoBehaviour
     {
         Pendant pendant = pendantObject.GetComponent<Pendant>();
         mode = (Ecran.Mode)pendant.mode;
+        trajOFF = pendant.trajOFF;
         axe = pendant.axe;
 
         posX = cible.transform.position.x;
@@ -91,17 +92,17 @@ public class Ecran : MonoBehaviour
                 switch (axe)
                 {
                     case 0:
-                        txtMode.text = "Mode\nCOORDS\n\n\nDim. : X\nValeur : " + posX;
+                        txtMode.text = "Mode\nCOORDS\n\n\n\nDim. : X\nValeur : " + posX;
                         break;
                     case 1:
-                        txtMode.text = "Mode\nCOORDS\n\n\nDim. : Y\nValeur : " + posY;
+                        txtMode.text = "Mode\nCOORDS\n\n\n\nDim. : Y\nValeur : " + posY;
                         break;
                     case 2:
-                        txtMode.text = "Mode\nCOORDS\n\n\nDim. : Z\nValeur : " + posZ;
+                        txtMode.text = "Mode\nCOORDS\n\n\n\nDim. : Z\nValeur : " + posZ;
                         break;
                 }
 
-                txtCoords.text = "\nX : " + posX + "\nY : " + posY + "\nZ : " + posZ;
+                txtCoords.text = "\n\nX : " + posX + "\nY : " + posY + "\nZ : " + posZ;
                 break;
             case Mode.AXES:
                 switch (axe)
@@ -125,21 +126,28 @@ public class Ecran : MonoBehaviour
                         angle = axe5.transform.localEulerAngles.y;
                         break;
                 }
-                txtMode.text = "Mode\nAXES\n\n\nAxe n°" + (axe + 1) + "\nValeur : " + angle;
+                txtMode.text = "Mode\nAXES\n\n\n\nAxe n°" + (axe + 1) + "\nValeur : " + angle;
 
-                txtCoords.text = "\nX : " + posX + "\nY : " + posY + "\nZ : " + posZ;
+                txtCoords.text = "\n\nX : " + posX + "\nY : " + posY + "\nZ : " + posZ;
                 break;
             case Mode.AUTO:
-                txtMode.text = "Mode\nAUTO";
-                for (int i = 0; i < axe + 1; i++)
+                if (trajOFF)
                 {
-                    txtMode.text += "\n";
-                }
-                txtMode.text += "=>";
+                    txtMode.text = "Mode\nAUTO";
+                    for (int i = 0; i < axe + 1; i++)
+                    {
+                        txtMode.text += "\n";
+                    }
+                    txtMode.text += "=>";
 
-                txtCoords.text = "\n";
-                for (int i = 0; i < trajectoires.Count; i++)
-                    txtCoords.text += "\n" + trajectoires[i];
+                    txtCoords.text = "\n";
+                    for (int i = 0; i < trajectoires.Count; i++)
+                        txtCoords.text += "\n" + trajectoires[i];
+                }
+                else
+                {
+                    // affiche les coords
+                }
                 break;
         }
     }

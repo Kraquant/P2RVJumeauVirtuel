@@ -38,6 +38,14 @@ public class Pendant : MonoBehaviour
     private GameObject axe4;
     private GameObject axe5;
 
+    public Material bPlus;
+    public Material bMoins;
+    public Material bPlay;
+    public Material bFF;
+    private GameObject boutonP;
+    private GameObject boutonM;
+    public bool trajOFF;
+
     private float pressTime;
     private float delay;
     private float pas_pos_current;
@@ -68,6 +76,9 @@ public class Pendant : MonoBehaviour
         axe3 = GameObject.Find("OsBras4");
         axe4 = GameObject.Find("OsBras5");
         axe5 = GameObject.Find("OsBras6");
+
+        boutonP = GameObject.Find("ContextualRight");
+        boutonM = GameObject.Find("ContextualLeft");
 
         mode = Mode.COORDS;
         axe = 0;
@@ -105,7 +116,7 @@ public class Pendant : MonoBehaviour
                 else { axe = 5; }
             }
         }
-        else
+        else if (trajOFF)
         {
             axe += 1;
             if (axe > trajectoires.Count - 1) { axe = 0; }
@@ -119,7 +130,7 @@ public class Pendant : MonoBehaviour
             axe += 1;
             if ((axe > 5 && mode == Mode.AXES) || (axe > 2 && mode == Mode.COORDS)) { axe = 0; }
         }
-        else
+        else if (trajOFF)
         {
             axe -= 1;
             if (axe < 0) { axe = trajectoires.Count - 1; }
@@ -147,13 +158,23 @@ public class Pendant : MonoBehaviour
             cible.transform.SetParent(null);
             finalIK.GetComponent<CCDIK>().enabled = true;
 
+            boutonP.material = bFF;
+            boutonP.tag = "FF"
+            boutonM.material = bPlay;
+            outonP.tag = "Play"
+
             mode = Mode.AUTO;
         }
-        else
+        else if (trajOFF)
         {
             posX = 0;
             posY = 0;
             posZ = 0;
+
+            boutonP.material = bPlus;
+            outonP.tag = "Plus"
+            boutonM.material = bMoins;
+            outonP.tag = "Minus"
 
             mode = Mode.COORDS;
         }
@@ -172,22 +193,29 @@ public class Pendant : MonoBehaviour
 
     public void OnBPlayTriggerEnter()
     {
-        // runFileRead = !runFileRead;
-        // readSpeedFactor = 1;
+        if (trajOFF)
+        {
+            trajOFF = false;
+            // Lance la lecture du fichier
+            // Met la vitesse à 1
+        }
+        else
+        {
+            // Met la vitesse à 0 si elle valait 1
+            // Met la vitesse à 1 si elle valait 0
+        }
     }
 
     public void OnBFFTriggerEnter()
     {
-        // if (readSpeedFactor != 64) {
-        // readSpeedFactor = 2*readSpeedFactor
-        // } else {
-        // readSpeedFactor = 2;
-        // }
+        pressTime = Time.time;
     }
 
     public void OnBSTOPTriggerEnter()
     {
-        // Switch mode
+        trajOFF = true;
+        // Stop la lecture du fichier
+        // Réinitialise la position ?
     }
 
     public void OnBMinusTriggerStay()
@@ -274,7 +302,16 @@ public class Pendant : MonoBehaviour
 
     public void OnBFFTriggerStay()
     {
-        // Delay puis vitesse x4 avec palier à 64 ?
+        if (Time.time - pressTime < delay)
+        {
+            // if (readSpeedFactor < 64) { readingSpeedFactor = 2 * readingSpeedFactor }
+            // else { readingSpeedFactor = 2; }
+        }
+        else
+        {
+            // readingSpeedFactor *= 4;
+            // if (readingSpeedFactor > 64) { readingSpeedFactor = 64; }
+        }
     }
 
     // Update is called once per frame
