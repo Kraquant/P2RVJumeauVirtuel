@@ -94,7 +94,7 @@ public class Pendant : MonoBehaviour
         limit2 = 0;
 }
 
-    public void OnBBasTriggerEnter()
+    public void OnBDownTriggerEnter()
     {
         if (mode != Mode.AUTO)
         {
@@ -112,7 +112,7 @@ public class Pendant : MonoBehaviour
         }
     }
 
-    public void OnBHautTriggerEnter()
+    public void OnBUpTriggerEnter()
     {
         if (mode != Mode.AUTO)
         {
@@ -160,7 +160,7 @@ public class Pendant : MonoBehaviour
         axe = 0;
     }
 
-    public void OnBMoinsTriggerEnter()
+    public void OnBMinusTriggerEnter()
     {
         pressTime = Time.time;
     }
@@ -176,7 +176,7 @@ public class Pendant : MonoBehaviour
         // readSpeedFactor = 1;
     }
 
-    public void OnBFForwardTriggerEnter()
+    public void OnBFFTriggerEnter()
     {
         // if (readSpeedFactor != 64) {
         // readSpeedFactor = 2*readSpeedFactor
@@ -185,7 +185,12 @@ public class Pendant : MonoBehaviour
         // }
     }
 
-    public void OnBMoinsTriggerStay()
+    public void OnBSTOPTriggerEnter()
+    {
+        // Switch mode
+    }
+
+    public void OnBMinusTriggerStay()
     {
         Debug.Log(Time.time - pressTime);
         if (Time.time - pressTime < delay)
@@ -267,7 +272,7 @@ public class Pendant : MonoBehaviour
         }
     }
 
-    public void OnBFForwardTriggerStay()
+    public void OnBFFTriggerStay()
     {
         // Delay puis vitesse x4 avec palier à 64 ?
     }

@@ -12,8 +12,6 @@ public class Boutons : MonoBehaviour
     {
         Collider mouse = new Collider();
         OnTriggerEnter(mouse);
-        //int loop = 0;
-        //while (!Input.GetMouseButtonUp(0) && loop < 1000) { Debug.Log(loop);  OnTriggerStay(mouse); loop += 1; }
     }
 
     public void OnLongClick()
@@ -26,47 +24,50 @@ public class Boutons : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        string bouton = this.name;
+        string bouton = this.tag;
         Debug.Log(bouton);
         switch (bouton)
         {
-            case "Bouton haut":
-                pendant.GetComponent<Pendant>().OnBHautTriggerEnter();
+            case "Up":
+                pendant.GetComponent<Pendant>().OnBUpTriggerEnter();
                 break;
-            case "Bouton bas":
-                pendant.GetComponent<Pendant>().OnBBasTriggerEnter();
+            case "Down":
+                pendant.GetComponent<Pendant>().OnBDownTriggerEnter();
                 break;
-            case "Bouton mode":
+            case "Mode":
                 pendant.GetComponent<Pendant>().OnBModeTriggerEnter();
                 break;
-            case "Bouton plus":
+            case "Plus":
                 pendant.GetComponent<Pendant>().OnBPlusTriggerEnter();
                 break;
-            case "Bouton moins":
-                pendant.GetComponent<Pendant>().OnBMoinsTriggerEnter();
+            case "Minus":
+                pendant.GetComponent<Pendant>().OnBMinusTriggerEnter();
                 break;
-            case "Bouton play":
+            case "Play":
                 pendant.GetComponent<Pendant>().OnBPlayTriggerEnter();
                 break;
-            case "Bouton fforward":
-                pendant.GetComponent<Pendant>().OnBFForwardTriggerEnter();
+            case "FF":
+                pendant.GetComponent<Pendant>().OnBFFTriggerEnter();
+                break;
+            case "STOP":
+                pendant.GetComponent<Pendant>().OnBSTOPTriggerEnter();
                 break;
         }
     }
 
     private void OnTriggerStay(Collider other)
     {
-        string bouton = this.name;
+        string bouton = this.tag;
         switch (bouton)
         {
-            case "Bouton plus":
+            case "Plus":
                 pendant.GetComponent<Pendant>().OnBPlusTriggerStay();
                 break;
-            case "Bouton moins":
-                pendant.GetComponent<Pendant>().OnBMoinsTriggerStay();
+            case "Minus":
+                pendant.GetComponent<Pendant>().OnBMinusTriggerStay();
                 break;
-            case "Bouton fforward":
-                pendant.GetComponent<Pendant>().OnBFForwardTriggerStay();
+            case "FF":
+                pendant.GetComponent<Pendant>().OnBFFTriggerStay();
                 break;
         }
     }
