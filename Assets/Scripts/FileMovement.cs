@@ -8,52 +8,68 @@ using System.IO;
 
 public class FileMovement : MonoBehaviour
 {
-    //Public variables
-    public TextAsset trajectoryFile;
+    //Public variables ##########################################
+    [Range(0, 4.0f)] public float speed = 1.0f;
     public float scale = 0.001f;
-    public bool loop;
+    public bool loop = true;
     public Color dotMainCol = Color.white;
-    public int pointResolution = 10;
+    public int pointResolution = 10; //Draw one point every pointResolution
+    public File trajectory { get; private set; }
+    public int[] playingProgress { get { return _playingProgress; } }
 
-    //Private variables
+    //Private variables #########################################
     private bool _isActive;
     [SerializeField] float _duration;
     private float _tInit;
     private int _stepMax;
     private Vector3 _initPos;
     private Vector3 _reference;
+    private bool _loadingFile;
+
+    private float _Bras6Len;
+    [SerializeField] GameObject Target2;
+    [SerializeField] GameObject OsBras5;
+    [SerializeField] GameObject OsBras6;
+
+    //Variables for point drawing
     [SerializeField] GameObject _billBoard;
     [SerializeField] float _pointScale = 10.0f;
-       
+    private GameObject _pointsHolder;
 
-    private File _trajectory;
-    // Start is called before the first frame update
+    private int[] _playingProgress;
+
+    private int _targetStep;
+
     void Start()
     {
-        _duration = 0.0f;
-        _tInit = Time.time;
-        _stepMax = 0;
+        //Setup intern variables
         _initPos = transform.position;
-        _isActive = false;
-
-        if (trajectoryFile != null)
-        {
-            _trajectory = new File(trajectoryFile);
-            _trajectory.waitEndReading();
-
-            _duration = _trajectory.Duration * 60;
-            _stepMax = _trajectory.Points.Length;
-            _isActive = true;
-            _reference = _trajectory.Points[0]._coords;
-            instantiatePoints();
-        }
+        _playingProgress = new int[2] { 0, 0 };
+        _Bras6Len = (OsBras6.transform.position - OsBras5.transform.position).magnitude;
+        stopPlaying(); //Set/Reset every component      
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!_isActive) return;
-        moveKuka();
+
+        // Checking Reading Status
+        if (_loadingFile)
+        {
+            if(!trajectory.IsReading)
+            {
+                _loadingFile = false;
+                OnFileDoneReading();
+            }
+        }
+        else if (_isActive)
+        {
+            moveKukaWithSpeed();
+        }
+        else if (trajectory == null && Vector3.Distance(this.transform.position, _initPos)  > Vector3.kEpsilon) //Returning to origin
+        {
+            this.transform.position = Vector3.MoveTowards(this.transform.position, _initPos, speed * Time.deltaTime);
+        }
     }
 
     private void moveKuka()
@@ -68,46 +84,85 @@ public class FileMovement : MonoBehaviour
             }
             else
             {
-                toggleActive();
+                stopPlaying();
             }
         }
 
         float timeStep = _stepMax * elapsedTime / _duration;
         int step = Mathf.FloorToInt(timeStep);
+        _playingProgress[0] = step;
         if (step == _stepMax)
         {
-            Vector3 nextCoord = scaledCoords(_trajectory.Points[0]);
-            Vector3 previousCoord =scaledCoords(_trajectory.Points[_stepMax]);
+            Vector3 nextCoord = scaledCoords(trajectory.Points[0]);
+            Vector3 previousCoord =scaledCoords(trajectory.Points[_stepMax]);
             transform.position = Vector3.Lerp(previousCoord, nextCoord, timeStep - step);
         } else
         {
-            Vector3 nextCoord = scaledCoords(_trajectory.Points[step +1]);
-            Vector3 previousCoord = scaledCoords(_trajectory.Points[step]);
+            Vector3 nextCoord = scaledCoords(trajectory.Points[step +1]);
+            Vector3 previousCoord = scaledCoords(trajectory.Points[step]);
             transform.position = Vector3.Lerp(previousCoord, nextCoord, timeStep - step);
         }
-
-
+        Target2.transform.position = this.transform.position - (trajectory.Points[step]._normal).normalized*_Bras6Len;
     }
 
+    private void moveKukaWithSpeed()
+    {
+        bool distanceReached = false;
+        float remainingDistance = speed * Time.deltaTime;
+        Vector3 currentPos = this.transform.position;
+        Vector3 _targetCoord = scaledCoords(trajectory.Points[_targetStep]);
+        while (!distanceReached)
+        {
+            float distanceToNextTarget = Vector3.Distance(currentPos, _targetCoord);
+            if (remainingDistance > distanceToNextTarget)
+            {
+                remainingDistance -= distanceToNextTarget;
+                currentPos = _targetCoord;
+                _targetStep++;
+                if(_targetStep >= _stepMax) { _targetStep = 0; }
+                _playingProgress[0] = _targetStep;
+                _targetCoord = scaledCoords(trajectory.Points[_targetStep]);
+            }
+
+            else
+            {
+                distanceReached = true;
+            }
+        }
+
+        this.transform.position = Vector3.MoveTowards(currentPos, _targetCoord, remainingDistance);
+        Target2.transform.position = this.transform.position - (trajectory.Points[_targetStep]._normal).normalized * _Bras6Len;
+
+    }
+    private Vector3 scaledCoords(Point point)
+    {
+        return _initPos + (_reference - point._coords) * scale;
+    }
+
+    private void clearPoints()
+    {
+        Destroy(_pointsHolder);
+        _pointsHolder = new GameObject();
+        _pointsHolder.name = "CoordinatesPoints";
+    }
     public void instantiatePoints()
     {
+        //Before anything, we need to clear the previous points...
+        clearPoints();
+        //Then we create new ones
         float H, S, V;
-
         Color.RGBToHSV(dotMainCol, out H, out S, out V);
 
-        GameObject pointsHolder = new GameObject();
-        pointsHolder.name = "CoordinatesPoints";
-
-        GameObject[] levels = new GameObject[_trajectory.maxLevel];
+        GameObject[] levels = new GameObject[trajectory.maxLevel];
         for (int i = 0; i < levels.Length; i++)
         {
             GameObject iLevel = new GameObject();
             iLevel.name = "Soudure niveau " + (i+1).ToString();
-            iLevel.transform.SetParent(pointsHolder.transform);
+            iLevel.transform.SetParent(_pointsHolder.transform);
             levels[i] = iLevel;
         }
         int filter = 0;
-        foreach(Point point in _trajectory.Points)
+        foreach(Point point in trajectory.Points)
         {
             if (filter % pointResolution == 0)
             {
@@ -128,13 +183,66 @@ public class FileMovement : MonoBehaviour
         }
     }
 
-    public void toggleActive()
+    public void togglePlaying()
     {
-        _isActive = false;
+        _isActive = !_isActive;
     }
 
-    private Vector3 scaledCoords(Point point)
+    public void stopPlaying()
     {
-        return _initPos + (_reference - point._coords) * scale;
+        trajectory = null;
+        _tInit = 0.0f;
+        _duration = 0.0f;
+        _stepMax = 0;
+        _isActive = false;
+        _loadingFile = false;
+        clearPoints();
+    }
+
+    public void loadNewFile(TextAsset newFile)
+    {
+        stopPlaying();
+        if (newFile != null)
+        {
+            trajectory = new File(newFile);
+            _loadingFile = true;
+        }
+    }
+
+    private void OnFileDoneReading()
+    {
+        if (trajectory.IsReading)
+        {
+            UnityEngine.Debug.LogError("File Access Denied");
+        }
+        else
+        {
+            //Setting up new values for the variables.
+            _duration = trajectory.Duration * 60;
+            _stepMax = trajectory.Points.Length;
+            playingProgress[1] = _stepMax;
+            _isActive = true;
+            _reference = trajectory.Points[0]._coords;
+            _tInit = Time.deltaTime;
+            _targetStep = 0;
+            
+            instantiatePoints();
+        }
+    }
+
+    private float computeSpeed() //Very Slow please de not use
+    {
+        if (trajectory == null) { return 0.0f; }
+        else
+        {
+            float totalDistance = 0.0f;
+            for (int i = 0; i < trajectory.Points.Length -1 ; i++)
+            {
+                totalDistance += Vector3.Distance(trajectory.Points[i]._coords * scale, trajectory.Points[i+1]._coords * scale);
+            }
+
+            return totalDistance / (trajectory.Duration * 60);
+        }
+        
     }
 }
