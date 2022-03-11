@@ -27,6 +27,7 @@ public class Ecran : MonoBehaviour
 
     private Mode mode;
     private int axe;
+    private bool trajOFF;
 
     private enum Mode { COORDS, AXES, AUTO}
 

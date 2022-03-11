@@ -158,10 +158,10 @@ public class Pendant : MonoBehaviour
             cible.transform.SetParent(null);
             finalIK.GetComponent<CCDIK>().enabled = true;
 
-            boutonP.material = bFF;
-            boutonP.tag = "FF"
-            boutonM.material = bPlay;
-            outonP.tag = "Play"
+            boutonP.GetComponent<MeshRenderer>().material = bFF;
+            boutonP.tag = "FF";
+            boutonM.GetComponent<MeshRenderer>().material = bPlay;
+            boutonP.tag = "Play";
 
             mode = Mode.AUTO;
         }
@@ -171,10 +171,10 @@ public class Pendant : MonoBehaviour
             posY = 0;
             posZ = 0;
 
-            boutonP.material = bPlus;
-            outonP.tag = "Plus"
-            boutonM.material = bMoins;
-            outonP.tag = "Minus"
+            boutonP.GetComponent<MeshRenderer>().material = bPlus;
+            boutonP.tag = "Plus";
+            boutonM.GetComponent<MeshRenderer>().material = bMoins;
+            boutonP.tag = "Minus";
 
             mode = Mode.COORDS;
         }
