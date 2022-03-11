@@ -7,7 +7,9 @@ using UnityEngine.XR.Interaction.Toolkit;
 public class TeleportationManager : MonoBehaviour
 {
     [SerializeField] private InputActionAsset actionAsset;
+    [SerializeField] private TeleportationProvider provider;
     [SerializeField] private XRRayInteractor rayInteractor;
+    private bool isActive;
 
     void Start()
     {
@@ -21,21 +23,36 @@ public class TeleportationManager : MonoBehaviour
         tpCancel.canceled += OnTeleportationCancel;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-
+        if (!isActive) return; 
     }
 
     private void OnTeleportationActivate(InputAction.CallbackContext context)
     {
         rayInteractor.enabled = true;
         Debug.Log("Activation de la TP");
+        isActive = true;
     }
 
     private void OnTeleportationCancel(InputAction.CallbackContext context)
     {
+        if (rayInteractor.TryGetCurrent3DRaycastHit(out RaycastHit hit))
+        {
+            rayInteractor.TryGetHitInfo(out Vector3 pos, out Vector3 norm, out int inlinePos, out bool validTarget);
+
+            if (validTarget)
+            {
+                TeleportRequest request = new TeleportRequest()
+                {
+                    destinationPosition = hit.point,
+                };
+                provider.QueueTeleportRequest(request);
+            }
+        }
+
         rayInteractor.enabled = false;
         Debug.Log("Desactivation de la TP");
+        isActive = false;
     }
 }
