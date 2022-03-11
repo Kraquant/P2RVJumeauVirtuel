@@ -21,7 +21,6 @@ public class TestingFileMove : MonoBehaviour
         controller = fileInteractionSphere.GetComponent<FileMovement>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         Texte3D.text = "Progression de la lecture des points: " + controller.playingProgress[0].ToString() + "/" + controller.playingProgress[1].ToString();
