@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class Ecran : MonoBehaviour
 {
     public GameObject pendantObject;
+    public Pendant pendant;
     public Text txtMode;
     public Text txtCoords;
 
@@ -34,7 +35,8 @@ public class Ecran : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Pendant pendant = pendantObject.GetComponent<Pendant>();
+        pendant = pendantObject.GetComponent<Pendant>();
+        trajOFF = pendant.trajOFF;
         trajectoires = pendant.trajectoires;
 
         cible = GameObject.Find("Sphere");
@@ -78,7 +80,6 @@ public class Ecran : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Pendant pendant = pendantObject.GetComponent<Pendant>();
         mode = (Ecran.Mode)pendant.mode;
         trajOFF = pendant.trajOFF;
         axe = pendant.axe;

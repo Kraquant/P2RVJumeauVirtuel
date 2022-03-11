@@ -79,6 +79,7 @@ public class Pendant : MonoBehaviour
 
         boutonP = GameObject.Find("ContextualRight");
         boutonM = GameObject.Find("ContextualLeft");
+        trajOFF = true;
 
         mode = Mode.COORDS;
         axe = 0;
@@ -161,7 +162,7 @@ public class Pendant : MonoBehaviour
             boutonP.GetComponent<MeshRenderer>().material = bFF;
             boutonP.tag = "FF";
             boutonM.GetComponent<MeshRenderer>().material = bPlay;
-            boutonP.tag = "Play";
+            boutonM.tag = "Play";
 
             mode = Mode.AUTO;
         }
@@ -174,7 +175,7 @@ public class Pendant : MonoBehaviour
             boutonP.GetComponent<MeshRenderer>().material = bPlus;
             boutonP.tag = "Plus";
             boutonM.GetComponent<MeshRenderer>().material = bMoins;
-            boutonP.tag = "Minus";
+            boutonM.tag = "Minus";
 
             mode = Mode.COORDS;
         }
