@@ -42,8 +42,22 @@ public class Pendant : MonoBehaviour
     public Material bMoins;
     public Material bPlay;
     public Material bFF;
-    private GameObject boutonP;
-    private GameObject boutonM;
+    public Material bFFG;
+    public Material bMode;
+    public Material bModeG;
+    public Material bStop;
+    public Material bStopG;
+    public Material bArrUp;
+    public Material bArrUpG;
+    public Material bArrDo;
+    public Material bArrDoG;
+
+    private GameObject boutonDroit;
+    private GameObject boutonGauche;
+    private GameObject boutonMode;
+    private GameObject boutonStop;
+    private GameObject boutonArrUp;
+    private GameObject boutonArrDo;
     public bool trajOFF;
 
     private float pressTime;
@@ -77,9 +91,22 @@ public class Pendant : MonoBehaviour
         axe4 = GameObject.Find("OsBras5");
         axe5 = GameObject.Find("OsBras6");
 
-        boutonP = GameObject.Find("ContextualRight");
-        boutonM = GameObject.Find("ContextualLeft");
+        boutonDroit = GameObject.Find("ContextualRight");
+        boutonGauche = GameObject.Find("ContextualLeft");
+        boutonMode = GameObject.Find("ModeButton");
+        boutonArrUp = GameObject.Find("ArrowUp");
+        boutonArrDo = GameObject.Find("ArrowDown");
+        boutonStop = GameObject.Find("StopButton");
         trajOFF = true;
+        boutonGauche.tag = "Minus";
+        boutonDroit.tag = "Plus";
+
+        boutonStop.GetComponent<MeshRenderer>().material = bStopG;
+        boutonGauche.GetComponent<MeshRenderer>().material = bMoins;
+        boutonDroit.GetComponent<MeshRenderer>().material = bPlus;
+        boutonArrUp.GetComponent<MeshRenderer>().material = bArrUp;
+        boutonArrDo.GetComponent<MeshRenderer>().material = bArrDo;
+        boutonMode.GetComponent<MeshRenderer>().material = bMode;
 
         mode = Mode.COORDS;
         axe = 0;
@@ -159,10 +186,10 @@ public class Pendant : MonoBehaviour
             cible.transform.SetParent(null);
             finalIK.GetComponent<CCDIK>().enabled = true;
 
-            boutonP.GetComponent<MeshRenderer>().material = bFF;
-            boutonP.tag = "FF";
-            boutonM.GetComponent<MeshRenderer>().material = bPlay;
-            boutonM.tag = "Play";
+            boutonDroit.GetComponent<MeshRenderer>().material = bFFG;
+            boutonDroit.tag = "FF";
+            boutonGauche.GetComponent<MeshRenderer>().material = bPlay;
+            boutonGauche.tag = "Play";
 
             mode = Mode.AUTO;
         }
@@ -172,10 +199,10 @@ public class Pendant : MonoBehaviour
             posY = 0;
             posZ = 0;
 
-            boutonP.GetComponent<MeshRenderer>().material = bPlus;
-            boutonP.tag = "Plus";
-            boutonM.GetComponent<MeshRenderer>().material = bMoins;
-            boutonM.tag = "Minus";
+            boutonDroit.GetComponent<MeshRenderer>().material = bPlus;
+            boutonDroit.tag = "Plus";
+            boutonGauche.GetComponent<MeshRenderer>().material = bMoins;
+            boutonGauche.tag = "Minus";
 
             mode = Mode.COORDS;
         }
@@ -197,6 +224,11 @@ public class Pendant : MonoBehaviour
         if (trajOFF)
         {
             trajOFF = false;
+            boutonArrUp.GetComponent<MeshRenderer>().material = bArrUpG;
+            boutonArrDo.GetComponent<MeshRenderer>().material = bArrDoG;
+            boutonDroit.GetComponent<MeshRenderer>().material = bFF;
+            boutonStop.GetComponent<MeshRenderer>().material = bStop;
+            boutonMode.GetComponent<MeshRenderer>().material = bModeG;
             // Lance la lecture du fichier
             // Met la vitesse à 1
         }
@@ -214,9 +246,17 @@ public class Pendant : MonoBehaviour
 
     public void OnBSTOPTriggerEnter()
     {
-        trajOFF = true;
-        // Stop la lecture du fichier
-        // Réinitialise la position ?
+        if (!trajOFF)
+        {
+            trajOFF = true;
+            boutonArrUp.GetComponent<MeshRenderer>().material = bArrUp;
+            boutonArrDo.GetComponent<MeshRenderer>().material = bArrDo;
+            boutonDroit.GetComponent<MeshRenderer>().material = bFFG;
+            boutonStop.GetComponent<MeshRenderer>().material = bStopG;
+            boutonMode.GetComponent<MeshRenderer>().material = bMode;
+            // Stop la lecture du fichier
+            // Réinitialise la position ?
+        }
     }
 
     public void OnBMinusTriggerStay()
