@@ -148,7 +148,8 @@ public class Ecran : MonoBehaviour
                 }
                 else
                 {
-                    // affiche les coords
+                    txtMode.text = "Mode\nAUTO";
+                    txtCoords.text = "\n\nX :" + posX + "\nY : " + posY + "\nZ : " + posZ;
                 }
                 break;
         }

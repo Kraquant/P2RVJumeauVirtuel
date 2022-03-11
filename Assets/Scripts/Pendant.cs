@@ -355,7 +355,6 @@ public class Pendant : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (mode == Mode.COORDS)
