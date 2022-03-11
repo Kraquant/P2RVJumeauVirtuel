@@ -23,11 +23,6 @@ public class TeleportationManager : MonoBehaviour
         tpCancel.canceled += OnTeleportationCancel;
     }
 
-    private void Update()
-    {
-        if (!isActive) return; 
-    }
-
     private void OnTeleportationActivate(InputAction.CallbackContext context)
     {
         rayInteractor.enabled = true;

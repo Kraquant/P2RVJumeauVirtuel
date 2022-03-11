@@ -3,7 +3,15 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - STOP
+  - Up
+  - Down
+  - Plus
+  - Minus
+  - Play
+  - FF
+  - Mode
   layers:
   - Default
   - TransparentFX
