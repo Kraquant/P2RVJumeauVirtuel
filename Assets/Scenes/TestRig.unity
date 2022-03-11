@@ -2030,7 +2030,7 @@ MonoBehaviour:
   m_InteractionLayers:
     m_Bits: 1
   m_SelectMode: 1
-  m_CustomReticle: {fileID: 919132149155446097, guid: a891c873c1e87574dbc15f7414534e56, type: 3}
+  m_CustomReticle: {fileID: 5105292362062778173, guid: a5fa4f6844ea79345beda74728bbbf51, type: 3}
   m_FirstHoverEntered:
     m_PersistentCalls:
       m_Calls: []

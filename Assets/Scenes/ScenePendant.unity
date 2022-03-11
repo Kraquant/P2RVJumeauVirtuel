@@ -2808,7 +2808,7 @@ GameObject:
   - component: {fileID: 6347808353856747653}
   - component: {fileID: 6347808353856747652}
   m_Layer: 0
-  m_Name: MenuButton
+  m_Name: ModeButton
   m_TagString: Mode
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
