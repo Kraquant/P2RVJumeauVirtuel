@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
 
 public class Ecran : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class Ecran : MonoBehaviour
     public Text txtCoords;
 
     private List<TextAsset> trajectoires;
+    public string path;
 
     private float angle;
 
@@ -136,6 +138,9 @@ public class Ecran : MonoBehaviour
                 txtCoords.text = "\n\nX : " + posX + "\nY : " + posY + "\nZ : " + posZ;
                 break;
             case Mode.AUTO:
+                //var info = new DirectoryInfo(path);
+                //var fileInfo = info.GetFiles();
+                //foreach (var file in fileInfo) { }
                 if (trajOFF)
                 {
                     txtMode.text = "Mode\nAUTO";

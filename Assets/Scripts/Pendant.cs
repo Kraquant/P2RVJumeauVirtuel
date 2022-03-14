@@ -91,6 +91,7 @@ public class Pendant : MonoBehaviour
         IKs[0].enabled = true;
         IKs[1].enabled = false;
         IKs[2].enabled = false;
+        motionManager = GameObject.Find("MotionManager");
         mvmtScript = motionManager.GetComponent<FileMovement>();
 
         cible = GameObject.Find("Sphere");
@@ -194,7 +195,6 @@ public class Pendant : MonoBehaviour
         else if (mode == Mode.AXES)
         {
             cible.transform.SetParent(null);
-            finalIK.GetComponent<CCDIK>().enabled = true;
 
             boutonDroit.GetComponent<MeshRenderer>().material = bFFG;
             boutonDroit.tag = "FF";
@@ -215,6 +215,9 @@ public class Pendant : MonoBehaviour
             boutonGauche.tag = "Minus";
 
             mode = Mode.COORDS;
+            IKs[0].enabled = true;
+            IKs[1].enabled = false;
+            IKs[2].enabled = false;
         }
         axe = 0;
     }
@@ -240,7 +243,6 @@ public class Pendant : MonoBehaviour
             boutonStop.GetComponent<MeshRenderer>().material = bStop;
             boutonMode.GetComponent<MeshRenderer>().material = bModeG;
 
-            IKs[0].enabled = false;
             IKs[1].enabled = true;
             IKs[2].enabled = true;
 
