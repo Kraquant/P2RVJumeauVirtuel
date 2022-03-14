@@ -39,7 +39,7 @@ public class Ecran : MonoBehaviour
         trajOFF = pendant.trajOFF;
         trajectoires = pendant.trajectoires;
 
-        cible = GameObject.Find("Sphere");
+        cible = GameObject.Find("MotionManager");
         axe0 = GameObject.Find("OsBras1");
         axe1 = GameObject.Find("OsBras2");
         axe2 = GameObject.Find("OsBras3");

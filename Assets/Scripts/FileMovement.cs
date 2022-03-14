@@ -29,9 +29,11 @@ public class FileMovement : MonoBehaviour
     private bool _loadingFile;
 
     private float _Bras6Len;
+    private float _TorcheLen;
     [SerializeField] GameObject Target2;
     [SerializeField] GameObject OsBras5;
     [SerializeField] GameObject OsBras6;
+    [SerializeField] GameObject Torche;
 
     //Variables for point drawing
     [SerializeField] GameObject _billBoard;
@@ -47,7 +49,10 @@ public class FileMovement : MonoBehaviour
         //Setup intern variables
         _initPos = transform.position;
         _playingProgress = new int[2] { 0, 0 };
-        _Bras6Len = (OsBras6.transform.position - OsBras5.transform.position).magnitude;
+        _TorcheLen = (OsBras6.transform.position - OsBras5.transform.position).magnitude;
+        _Bras6Len = (Torche.transform.position - OsBras5.transform.position).magnitude;
+        UnityEngine.Debug.Log(_Bras6Len);
+        UnityEngine.Debug.Log(_TorcheLen);
         stopPlaying(); //Set/Reset every component      
     }
 

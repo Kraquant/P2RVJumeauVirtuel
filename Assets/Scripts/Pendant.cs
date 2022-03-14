@@ -83,7 +83,7 @@ public class Pendant : MonoBehaviour
     void Start()
     {
         finalIK = GameObject.Find("Bati");
-        cible = GameObject.Find("Sphere");
+        cible = GameObject.Find("MotionManager");
         axe0 = GameObject.Find("OsBras1");
         axe1 = GameObject.Find("OsBras2");
         axe2 = GameObject.Find("OsBras3");
