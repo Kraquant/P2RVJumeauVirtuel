@@ -5,7 +5,7 @@ using RootMotion.FinalIK;
 
 public class Pendant : MonoBehaviour
 {
-    public List<string> trajectoires;
+    public List<TextAsset> trajectoires;
     public int axe;
     public float pas_angle;
     public float pas_pos;
@@ -30,6 +30,10 @@ public class Pendant : MonoBehaviour
     private float limit2;
 
     private GameObject finalIK;
+    private CCDIK[] IKs;
+    private GameObject motionManager;
+    private FileMovement mvmtScript;
+
     private GameObject cible;
     private GameObject axe0;
     private GameObject axe1;
@@ -83,6 +87,12 @@ public class Pendant : MonoBehaviour
     void Start()
     {
         finalIK = GameObject.Find("Bati");
+        IKs = finalIK.GetComponents<CCDIK>();
+        IKs[0].enabled = true;
+        IKs[1].enabled = false;
+        IKs[2].enabled = false;
+        mvmtScript = motionManager.GetComponent<FileMovement>();
+
         cible = GameObject.Find("Sphere");
         axe0 = GameObject.Find("OsBras1");
         axe1 = GameObject.Find("OsBras2");
@@ -169,7 +179,7 @@ public class Pendant : MonoBehaviour
     {
         if (mode == Mode.COORDS)
         {
-            finalIK.GetComponent<CCDIK>().enabled = false;
+            IKs[0].enabled = false;
             cible.transform.SetParent(axe5.transform);
 
             angle0 = 0;
@@ -229,19 +239,27 @@ public class Pendant : MonoBehaviour
             boutonDroit.GetComponent<MeshRenderer>().material = bFF;
             boutonStop.GetComponent<MeshRenderer>().material = bStop;
             boutonMode.GetComponent<MeshRenderer>().material = bModeG;
-            // Lance la lecture du fichier
-            // Met la vitesse à 1
+
+            IKs[0].enabled = false;
+            IKs[1].enabled = true;
+            IKs[2].enabled = true;
+
+            mvmtScript.speed = 1;
+            mvmtScript.loadNewFile(trajectoires[axe]);
+            mvmtScript.togglePlaying();
         }
         else
         {
-            // Met la vitesse à 0 si elle valait 1
-            // Met la vitesse à 1 si elle valait 0
+            if (mvmtScript.speed == 0) { mvmtScript.speed = 1; }
+            else { mvmtScript.speed = 0; }
         }
     }
 
     public void OnBFFTriggerEnter()
     {
         pressTime = Time.time;
+        mvmtScript.speed *= 2;
+        if (mvmtScript.speed > 32) { mvmtScript.speed = 1; }
     }
 
     public void OnBSTOPTriggerEnter()
@@ -254,8 +272,11 @@ public class Pendant : MonoBehaviour
             boutonDroit.GetComponent<MeshRenderer>().material = bFFG;
             boutonStop.GetComponent<MeshRenderer>().material = bStopG;
             boutonMode.GetComponent<MeshRenderer>().material = bMode;
-            // Stop la lecture du fichier
-            // Réinitialise la position ?
+
+            mvmtScript.stopPlaying();
+            IKs[0].enabled = true;
+            IKs[1].enabled = false;
+            IKs[2].enabled = false;
         }
     }
 
@@ -343,16 +364,12 @@ public class Pendant : MonoBehaviour
 
     public void OnBFFTriggerStay()
     {
-        if (Time.time - pressTime < delay)
-        {
-            // if (readSpeedFactor < 64) { readingSpeedFactor = 2 * readingSpeedFactor }
-            // else { readingSpeedFactor = 2; }
-        }
-        else
-        {
-            // readingSpeedFactor *= 4;
-            // if (readingSpeedFactor > 64) { readingSpeedFactor = 64; }
-        }
+        if (Time.time - pressTime > delay) { mvmtScript.speed = 32; }
+    }
+
+    public void OnBFFTriggerRelease()
+    {
+        if (Time.time - pressTime > delay) { mvmtScript.speed = 1; }
     }
 
     // Update is called once per frame

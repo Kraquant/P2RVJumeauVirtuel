@@ -71,4 +71,9 @@ public class Boutons : MonoBehaviour
                 break;
         }
     }
+
+    private void OnTriggerRelease(Collider other)
+    {
+        if (this.tag == "FF") { pendant.GetComponent<Pendant>().OnBFFTriggerStay(); }
+    }
 }

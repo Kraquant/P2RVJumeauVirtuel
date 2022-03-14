@@ -6,11 +6,14 @@ using UnityEngine.UI;
 public class Ecran : MonoBehaviour
 {
     public GameObject pendantObject;
+
+    [HideInInspector]
     public Pendant pendant;
+
     public Text txtMode;
     public Text txtCoords;
 
-    private List<string> trajectoires;
+    private List<TextAsset> trajectoires;
 
     private float angle;
 
@@ -144,7 +147,7 @@ public class Ecran : MonoBehaviour
 
                     txtCoords.text = "\n";
                     for (int i = 0; i < trajectoires.Count; i++)
-                        txtCoords.text += "\n" + trajectoires[i];
+                        txtCoords.text += "\n" + trajectoires[i].text;
                 }
                 else
                 {
