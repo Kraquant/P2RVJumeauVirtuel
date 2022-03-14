@@ -38,7 +38,7 @@ public class Pendant : MonoBehaviour
     private GameObject motionManager;
     private FileMovement mvmtScript;
 
-    // Bras du robot
+    // Composants du robot
     private GameObject cible;
     private GameObject axe0;
     private GameObject axe1;
@@ -81,7 +81,7 @@ public class Pendant : MonoBehaviour
     public enum Mode { COORDS, AXES, AUTO }
     public Mode mode;
 
-    // Getter / Setter
+    // Consulteurs et Modifieurs pour les variables privées utiles ailleurs
     public float PosX { get => posX; set => posX = value; }
     public float PosY { get => posY; set => posY = value; }
     public float PosZ { get => posZ; set => posZ = value; }
@@ -98,6 +98,7 @@ public class Pendant : MonoBehaviour
     {
         // Initialisation de toutes les variables
         // et récupération des paramètres extérieurs
+
         finalIK = GameObject.Find("Bati");
         IKs = finalIK.GetComponents<CCDIK>();
         IKs[0].enabled = true;
@@ -156,7 +157,7 @@ public class Pendant : MonoBehaviour
         limit2 = 0;
     }
 
-    // A l'appuie sur le bouton "Flèche Bas"
+    // A l'appui sur le bouton "Flèche Bas"
     public void OnBDownTriggerEnter()
     {
         // En mode COORDS ou AXES :
@@ -167,7 +168,7 @@ public class Pendant : MonoBehaviour
             {
                 // En mode COORDS, il y a 3 "axes" différents (X, Y, Z)
                 if (mode == Mode.COORDS) { axe = 2; }
-                // En mode AXES, il y en a 6 (bras 1, 2, ..., 6)
+                // En mode AXES, il y en a 6 (bras 1 à 6)
                 else { axe = 5; } 
             }
         }
@@ -179,7 +180,7 @@ public class Pendant : MonoBehaviour
         }
     }
 
-    // A l'appuie sur le bouton "Flèche Haut"
+    // A l'appui sur le bouton "Flèche Haut"
     public void OnBUpTriggerEnter()
     {
         // En mode COORDS ou AXES :
@@ -443,7 +444,7 @@ public class Pendant : MonoBehaviour
     // Quand on relâche le bouton "Avance Rapide"
     public void OnBFFTriggerRelease()
     {
-        // Si c'était un appuie long, on réinitialise la vitesse de lecture
+        // Si c'était un appui long, on réinitialise la vitesse de lecture
         if (Time.time - pressTime > delay) { mvmtScript.speed = 1; }
     }
 

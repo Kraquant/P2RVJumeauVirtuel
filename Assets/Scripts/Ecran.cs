@@ -9,16 +9,24 @@ public class Ecran : MonoBehaviour
     public GameObject pendantObject;
 
     [HideInInspector]
+    // Script du pendant
     public Pendant pendant;
 
+    // Texte affiché à l'écran
     public Text txtMode;
     public Text txtCoords;
 
+    // Lecture de fichiers trajectoire
     private List<TextAsset> trajectoires;
     public string path;
 
+    // Paramètres de position de la torche
     private float angle;
+    private float posX;
+    private float posY;
+    private float posZ;
 
+    // Composants du robot
     private GameObject cible;
     private GameObject axe0;
     private GameObject axe1;
@@ -27,19 +35,18 @@ public class Ecran : MonoBehaviour
     private GameObject axe4;
     private GameObject axe5;
 
-    private float posX;
-    private float posY;
-    private float posZ;
-
+    // Mode et paramètres du pendant
     private Mode mode;
     private int axe;
     private bool trajOFF;
-
     private enum Mode { COORDS, AXES, AUTO}
 
-    // Start is called before the first frame update
+    // Au lancement :
     void Start()
     {
+        // Initialisation de toutes les variables
+        // et récupération des paramètres extérieurs
+
         pendant = pendantObject.GetComponent<Pendant>();
         trajOFF = pendant.trajOFF;
         trajectoires = pendant.trajectoires;
@@ -59,6 +66,7 @@ public class Ecran : MonoBehaviour
         mode = (Ecran.Mode)pendant.mode;
         axe = pendant.axe;
 
+        // "angle" prend la valeur d'angle de l'axe courant
         switch (axe)
         {
             case 0:
@@ -82,20 +90,24 @@ public class Ecran : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
+    // Une fois par frame :
     void Update()
     {
+        // Mise à jour du mode du pendant
         mode = (Ecran.Mode)pendant.mode;
         trajOFF = pendant.trajOFF;
         axe = pendant.axe;
 
+        // Mise à jour de la position de la cible
         posX = cible.transform.position.x;
         posY = cible.transform.position.y;
         posZ = cible.transform.position.z;
 
         switch (mode)
         {
+            // En mode COORDS :
             case Mode.COORDS:
+                // On affiche la valeur de position de la torche selon la dimension courante
                 switch (axe)
                 {
                     case 0:
@@ -109,9 +121,12 @@ public class Ecran : MonoBehaviour
                         break;
                 }
 
+                // et la position de la torche
                 txtCoords.text = "\n\nX : " + posX + "\nY : " + posY + "\nZ : " + posZ;
                 break;
+            // En mode AXES :
             case Mode.AXES:
+                // Mise à jour de la valeur d'"angle"
                 switch (axe)
                 {
                     case 0:
@@ -133,16 +148,23 @@ public class Ecran : MonoBehaviour
                         angle = axe5.transform.localEulerAngles.y;
                         break;
                 }
+                // On affiche la valeur d'angle de l'axe courant
                 txtMode.text = "Mode\nAXES\n\n\n\nAxe n°" + (axe + 1) + "\nValeur : " + angle;
 
+                // et la position de la torche
                 txtCoords.text = "\n\nX : " + posX + "\nY : " + posY + "\nZ : " + posZ;
                 break;
+            // En mode AUTO :
             case Mode.AUTO:
+
                 //var info = new DirectoryInfo(path);
                 //var fileInfo = info.GetFiles();
                 //foreach (var file in fileInfo) { }
+
+                // Si aucune trajectoire n'est lue :
                 if (trajOFF)
                 {
+                    // On affiche le curseur de sélection du fichier trajectoire
                     txtMode.text = "Mode\nAUTO";
                     for (int i = 0; i < axe + 1; i++)
                     {
@@ -150,14 +172,16 @@ public class Ecran : MonoBehaviour
                     }
                     txtMode.text += "=>";
 
+                    // et la liste des fichiers
                     txtCoords.text = "\n";
                     for (int i = 0; i < trajectoires.Count; i++)
                         txtCoords.text += "\n" + trajectoires[i].text;
                 }
+                // Si une trajectoire est en cours de lecture :
                 else
                 {
+                    // On affiche la position de la torche
                     txtMode.text = "Mode\nAUTO";
-
                     txtCoords.text = "\n\nX : " + posX + "\nY : " + posY + "\nZ : " + posZ;
                 }
                 break;
