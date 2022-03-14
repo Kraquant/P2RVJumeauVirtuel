@@ -2,20 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using RootMotion.FinalIK;
+using System.IO;
 
 public class Pendant : MonoBehaviour
 {
+    public string path;
     public List<TextAsset> trajectoires; // Liste des fichiers trajectoires
     public int axe; // Indice de l'axe, de la trajectoire ou du bras courant 
-    public float pas_angle; // Pas de déplacement en angle par frame
-    public float pas_pos; // Pas de déplacement en distance par frame
-    public float pas_angle_rap; // Pas de déplacement en angle par frame pendant un appuie prolongé
-    public float pas_pos_rap; // Pas de déplacement en angle par frame pendant un appuie prolongé
+    public float pas_angle; // Pas de dï¿½placement en angle par frame
+    public float pas_pos; // Pas de dï¿½placement en distance par frame
+    public float pas_angle_rap; // Pas de dï¿½placement en angle par frame pendant un appuie prolongï¿½
+    public float pas_pos_rap; // Pas de dï¿½placement en angle par frame pendant un appuie prolongï¿½
 
-    public float smoothTime; // Délai de déplacement
-    public Vector3 velocity; // Vitesse de déplacement
+    public float smoothTime; // Dï¿½lai de dï¿½placement
+    public Vector3 velocity; // Vitesse de dï¿½placement
 
-    // Coordonnées de la torche
+    // Coordonnï¿½es de la torche
     private float posX;
     private float posY;
     private float posZ;
@@ -32,7 +34,7 @@ public class Pendant : MonoBehaviour
     private float limit1;
     private float limit2;
 
-    // Eléments permettant les calculs de cinématique inverse
+    // Elï¿½ments permettant les calculs de cinï¿½matique inverse
     private GameObject finalIK;
     private CCDIK[] IKs;
     private GameObject motionManager;
@@ -71,9 +73,9 @@ public class Pendant : MonoBehaviour
     private GameObject boutonArrDo;
     public bool trajOFF; // false : une trajectoire est en cours de lecture (sinon, false)
 
-    // Variables de gestion des délais d'appui prolongé
+    // Variables de gestion des dï¿½lais d'appui prolongï¿½
     private float pressTime; // Date d'appui
-    private float delay; // Temps minimum d'appui pour le considérer comme "prolongé"
+    private float delay; // Temps minimum d'appui pour le considï¿½rer comme "prolongï¿½"
     private float pas_pos_current; // Pas en distance courant
     private float pas_angle_current; // Pas en angle courant
 
@@ -81,7 +83,7 @@ public class Pendant : MonoBehaviour
     public enum Mode { COORDS, AXES, AUTO }
     public Mode mode;
 
-    // Consulteurs et Modifieurs pour les variables privées utiles ailleurs
+    // Consulteurs et Modifieurs pour les variables privï¿½es utiles ailleurs
     public float PosX { get => posX; set => posX = value; }
     public float PosY { get => posY; set => posY = value; }
     public float PosZ { get => posZ; set => posZ = value; }
@@ -97,7 +99,7 @@ public class Pendant : MonoBehaviour
     void Start()
     {
         // Initialisation de toutes les variables
-        // et récupération des paramètres extérieurs
+        // et rï¿½cupï¿½ration des paramï¿½tres extï¿½rieurs
 
         finalIK = GameObject.Find("Bati");
         IKs = finalIK.GetComponents<CCDIK>();
@@ -122,6 +124,10 @@ public class Pendant : MonoBehaviour
         boutonArrDo = GameObject.Find("ArrowDown");
         boutonStop = GameObject.Find("StopButton");
         trajOFF = true;
+
+        DirectoryInfo info = new DirectoryInfo(path);
+        trajectoires = info.GetFiles();
+
         boutonGauche.tag = "Minus";
         boutonDroit.tag = "Plus";
 
@@ -157,7 +163,7 @@ public class Pendant : MonoBehaviour
         limit2 = 0;
     }
 
-    // A l'appui sur le bouton "Flèche Bas"
+    // A l'appui sur le bouton "Flï¿½che Bas"
     public void OnBDownTriggerEnter()
     {
         // En mode COORDS ou AXES :
@@ -166,9 +172,9 @@ public class Pendant : MonoBehaviour
             axe -= 1;
             if (axe < 0)
             {
-                // En mode COORDS, il y a 3 "axes" différents (X, Y, Z)
+                // En mode COORDS, il y a 3 "axes" diffï¿½rents (X, Y, Z)
                 if (mode == Mode.COORDS) { axe = 2; }
-                // En mode AXES, il y en a 6 (bras 1 à 6)
+                // En mode AXES, il y en a 6 (bras 1 ï¿½ 6)
                 else { axe = 5; } 
             }
         }
@@ -176,11 +182,11 @@ public class Pendant : MonoBehaviour
         else if (trajOFF) 
         {
             axe += 1;
-            if (axe > trajectoires.Count - 1) { axe = 0; }
+            if (axe > trajectoires.Length - 1) { axe = 0; }
         }
     }
 
-    // A l'appui sur le bouton "Flèche Haut"
+    // A l'appui sur le bouton "Flï¿½che Haut"
     public void OnBUpTriggerEnter()
     {
         // En mode COORDS ou AXES :
@@ -194,7 +200,7 @@ public class Pendant : MonoBehaviour
         else if (trajOFF) 
         {
             axe -= 1;
-            if (axe < 0) { axe = trajectoires.Count - 1; }
+            if (axe < 0) { axe = trajectoires.Length - 1; }
         }
     }
 
@@ -204,11 +210,11 @@ public class Pendant : MonoBehaviour
         // En mode COORDS, on passe au mode AXES
         if (mode == Mode.COORDS)
         {
-            // Le contrôle ne se fait plus en suivant la cible
+            // Le contrï¿½le ne se fait plus en suivant la cible
             IKs[0].enabled = false;
             cible.transform.SetParent(axe5.transform);
 
-            // On élimine les angles obsolètes
+            // On ï¿½limine les angles obsolï¿½tes
             angle0 = 0;
             angle1 = 0;
             angle2 = 0;
@@ -223,7 +229,7 @@ public class Pendant : MonoBehaviour
         {
             cible.transform.SetParent(null);
 
-            // On change l'aspect des boutons sous l'écran
+            // On change l'aspect des boutons sous l'ï¿½cran
             boutonDroit.GetComponent<MeshRenderer>().material = bFFG;
             boutonDroit.tag = "FF";
             boutonGauche.GetComponent<MeshRenderer>().material = bPlay;
@@ -235,12 +241,12 @@ public class Pendant : MonoBehaviour
         // Si changement il peut y avoir, on passe au mode COORDS
         else if (trajOFF)
         {
-            // On élimine les coordonnées obsolètes
+            // On ï¿½limine les coordonnï¿½es obsolï¿½tes
             posX = 0;
             posY = 0;
             posZ = 0;
 
-            // On change l'aspect des boutons sous l'écran
+            // On change l'aspect des boutons sous l'ï¿½cran
             boutonDroit.GetComponent<MeshRenderer>().material = bPlus;
             boutonDroit.tag = "Plus";
             boutonGauche.GetComponent<MeshRenderer>().material = bMoins;
@@ -248,26 +254,26 @@ public class Pendant : MonoBehaviour
 
             mode = Mode.COORDS;
 
-            // On passe en contrôle par suivi de la cible
+            // On passe en contrï¿½le par suivi de la cible
             IKs[0].enabled = true;
             IKs[1].enabled = false;
             IKs[2].enabled = false;
         }
-        // On réinitialise la valeur de l'itérateur
+        // On rï¿½initialise la valeur de l'itï¿½rateur
         axe = 0;
     }
 
     // A l'appui sur le bouton "Moins"
     public void OnBMinusTriggerEnter()
     {
-        // On lance le chronomètre
+        // On lance le chronomï¿½tre
         pressTime = Time.time;
     }
 
     // A l'appui sur le bouton "Plus"
     public void OnBPlusTriggerEnter()
     {
-        // On lance le chronomètre
+        // On lance le chronomï¿½tre
         pressTime = Time.time;
     }
 
@@ -279,26 +285,28 @@ public class Pendant : MonoBehaviour
         {
             trajOFF = false;
 
-            // On met à jour l'aspect des boutons actifs et inactifs
+            // On met ï¿½ jour l'aspect des boutons actifs et inactifs
             boutonArrUp.GetComponent<MeshRenderer>().material = bArrUpG;
             boutonArrDo.GetComponent<MeshRenderer>().material = bArrDoG;
             boutonDroit.GetComponent<MeshRenderer>().material = bFF;
             boutonStop.GetComponent<MeshRenderer>().material = bStop;
             boutonMode.GetComponent<MeshRenderer>().material = bModeG;
 
-            // On passe en contrôle via un fichier trajectoire
+            // On passe en contrï¿½le via un fichier trajectoire
             IKs[1].enabled = true;
             IKs[2].enabled = true;
 
             // Lancement de la lecture du fichier
             mvmtScript.speed = 1;
-            mvmtScript.loadNewFile(trajectoires[axe]);
+
+            TextAsset trajectoire = new TextAsset(path + "\\" + trajectoires[axe].Name);
+            mvmtScript.loadNewFile(trajectoire);
             mvmtScript.togglePlaying();
         }
-        // Si une trajectoire est déjà en cours de lecture :
+        // Si une trajectoire est dï¿½jï¿½ en cours de lecture :
         else
         {
-            // Si la lecture était en pause, on la relance
+            // Si la lecture ï¿½tait en pause, on la relance
             if (mvmtScript.speed == 0) { mvmtScript.speed = 1; }
             // Sinon, on la met en pause
             else { mvmtScript.speed = 0; }
@@ -308,9 +316,9 @@ public class Pendant : MonoBehaviour
     // A l'appui sur le bouton "Avance Rapide"
     public void OnBFFTriggerEnter()
     {
-        pressTime = Time.time; // On lance le chronomètre
+        pressTime = Time.time; // On lance le chronomï¿½tre
         mvmtScript.speed *= 2; // On multiplie la vitesse de lecture par 2 (appui bref)
-        if (mvmtScript.speed > 32) { mvmtScript.speed = 1; } // Si la vitesse était déjà au plus haut, on la réinitialise
+        if (mvmtScript.speed > 32) { mvmtScript.speed = 1; } // Si la vitesse ï¿½tait dï¿½jï¿½ au plus haut, on la rï¿½initialise
     }
 
     // A l'appui sur le bouton "Stop"
@@ -320,15 +328,15 @@ public class Pendant : MonoBehaviour
         if (!trajOFF)
         {
             trajOFF = true;
-            // On met à jour l'aspect des boutons actifs et inactifs
+            // On met ï¿½ jour l'aspect des boutons actifs et inactifs
             boutonArrUp.GetComponent<MeshRenderer>().material = bArrUp;
             boutonArrDo.GetComponent<MeshRenderer>().material = bArrDo;
             boutonDroit.GetComponent<MeshRenderer>().material = bFFG;
             boutonStop.GetComponent<MeshRenderer>().material = bStopG;
             boutonMode.GetComponent<MeshRenderer>().material = bMode;
 
-            // On arrête la lecture du fichier
-            // et on quitte le contrôle via un fichier trajectoire
+            // On arrï¿½te la lecture du fichier
+            // et on quitte le contrï¿½le via un fichier trajectoire
             mvmtScript.stopPlaying();
             IKs[0].enabled = true;
             IKs[1].enabled = false;
@@ -336,10 +344,10 @@ public class Pendant : MonoBehaviour
         }
     }
 
-    // Après un appui prolongé sur le bouton "Moins"
+    // Aprï¿½s un appui prolongï¿½ sur le bouton "Moins"
     public void OnBMinusTriggerStay()
     {
-        // Si l'appui est bref ou avant le dépassement du délai :
+        // Si l'appui est bref ou avant le dï¿½passement du dï¿½lai :
         if (Time.time - pressTime < delay)
         {
             // On utilise les petits pas
@@ -360,7 +368,7 @@ public class Pendant : MonoBehaviour
                 if (mode == Mode.COORDS) { posX = -pas_pos_current; }
                 // En mode AXES, on modifie les angles des bras du robot
                 else if (mode == Mode.AXES) { angle0 = -pas_angle_current; }
-                // En mode AUTO, le bouton est remplacé par le bouton "Lecture/Pause"
+                // En mode AUTO, le bouton est remplacï¿½ par le bouton "Lecture/Pause"
                 break;
             case 1:
                 if (mode == Mode.COORDS) { posY = -pas_pos_current; }
@@ -385,10 +393,10 @@ public class Pendant : MonoBehaviour
         }
     }
 
-    // Après un appui prolongé sur le bouton "Plus"
+    // Aprï¿½s un appui prolongï¿½ sur le bouton "Plus"
     public void OnBPlusTriggerStay()
     {
-        // Si l'appui est bref ou avant le dépassement du délai :
+        // Si l'appui est bref ou avant le dï¿½passement du dï¿½lai :
         if (Time.time - pressTime < delay)
         {
             // On utilise les petits pas
@@ -409,7 +417,7 @@ public class Pendant : MonoBehaviour
                 if (mode == Mode.COORDS) { posX = pas_pos_current; }
                 // En mode AXES, on modifie les angles des bras du robot
                 else if (mode == Mode.AXES) { angle0 = pas_angle_current; }
-                // En mode AUTO, le bouton est remplacé par le bouton "Avance Rapide"
+                // En mode AUTO, le bouton est remplacï¿½ par le bouton "Avance Rapide"
                 break;
             case 1:
                 if (mode == Mode.COORDS) { posY = pas_pos_current; }
@@ -434,17 +442,17 @@ public class Pendant : MonoBehaviour
         }
     }
 
-    // Après un appui prolongé sur le bouton "Avance Rapide"
+    // Aprï¿½s un appui prolongï¿½ sur le bouton "Avance Rapide"
     public void OnBFFTriggerStay()
     {
         // Si le temps d'appui est long, on lit la trajectoire en vitesse maximale
         if (Time.time - pressTime > delay) { mvmtScript.speed = 32; }
     }
 
-    // Quand on relâche le bouton "Avance Rapide"
+    // Quand on relï¿½che le bouton "Avance Rapide"
     public void OnBFFTriggerRelease()
     {
-        // Si c'était un appui long, on réinitialise la vitesse de lecture
+        // Si c'ï¿½tait un appui long, on rï¿½initialise la vitesse de lecture
         if (Time.time - pressTime > delay) { mvmtScript.speed = 1; }
     }
 
@@ -454,10 +462,10 @@ public class Pendant : MonoBehaviour
         // En mode COORDS :
         if (mode == Mode.COORDS)
         {
-            // On déplace la cible vers sa nouvelle position
+            // On dï¿½place la cible vers sa nouvelle position
             cible.transform.position = Vector3.SmoothDamp(cible.transform.position, cible.transform.position + new Vector3(posX, posY, posZ), ref velocity, smoothTime);
 
-            // On réinitialise les pas en position
+            // On rï¿½initialise les pas en position
             posX = 0;
             posY = 0;
             posZ = 0;
@@ -469,7 +477,7 @@ public class Pendant : MonoBehaviour
             limit1 = axe1.transform.localEulerAngles.z;
             limit2 = axe2.transform.localEulerAngles.z;
 
-            // Si le bras 2 dépasse ses limites de mouvements :
+            // Si le bras 2 dï¿½passe ses limites de mouvements :
             if (limit1 + angle1 < 309 && limit1 + angle1 > 161)
             {
                 // On le tourne vers la limite d'angle la plus proche de la valeur d'angle attendue
@@ -479,7 +487,7 @@ public class Pendant : MonoBehaviour
             // Sinon, on le tourne de la valeur d'angle attendue
             else { axe1.transform.localEulerAngles = Vector3.Lerp(axe1.transform.localEulerAngles, axe1.transform.localEulerAngles + new Vector3(0, 0, angle1), Time.deltaTime * 10); }
 
-            // Si le bras 3 dépasse ses limites de mouvements :
+            // Si le bras 3 dï¿½passe ses limites de mouvements :
             if (limit2 + angle2 < 206 && limit2 + angle2 > 164)
             {
                 // On le tourne vers la limite d'angle la plus proche de la valeur d'angle attendue
@@ -495,7 +503,7 @@ public class Pendant : MonoBehaviour
             axe4.transform.localEulerAngles = Vector3.Lerp(axe4.transform.localEulerAngles, axe4.transform.localEulerAngles + new Vector3(0, 0, angle4), Time.deltaTime * 10);
             axe5.transform.localEulerAngles = Vector3.Lerp(axe5.transform.localEulerAngles, axe5.transform.localEulerAngles + new Vector3(0, angle5, 0), Time.deltaTime * 10);
 
-            // On réinitialise les pas d'angles
+            // On rï¿½initialise les pas d'angles
             angle0 = 0;
             angle1 = 0;
             angle2 = 0;

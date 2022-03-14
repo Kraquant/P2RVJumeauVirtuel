@@ -232,7 +232,7 @@ public class FileMovement : MonoBehaviour
         }
     }
 
-    private float computeSpeed() //Very Slow please de not use
+    private float computeSpeed() //Very Slow please do not use
     {
         if (trajectory == null) { return 0.0f; }
         else

@@ -12,15 +12,11 @@ public class Ecran : MonoBehaviour
     // Script du pendant
     public Pendant pendant;
 
-    // Texte affiché à l'écran
+    // Texte affichï¿½ ï¿½ l'ï¿½cran
     public Text txtMode;
     public Text txtCoords;
 
-    // Lecture de fichiers trajectoire
-    private List<TextAsset> trajectoires;
-    public string path;
-
-    // Paramètres de position de la torche
+    // Paramï¿½tres de position de la torche
     private float angle;
     private float posX;
     private float posY;
@@ -35,22 +31,22 @@ public class Ecran : MonoBehaviour
     private GameObject axe4;
     private GameObject axe5;
 
-    // Mode et paramètres du pendant
+    // Mode et paramï¿½tres du pendant
     private Mode mode;
     private int axe;
     private bool trajOFF;
-    private enum Mode { COORDS, AXES, AUTO}
+
+    private enum Mode { COORDS, AXES, AUTO }
 
     // Au lancement :
     void Start()
     {
         // Initialisation de toutes les variables
-        // et récupération des paramètres extérieurs
+        // et rï¿½cupï¿½ration des paramï¿½tres extï¿½rieurs
 
         pendant = pendantObject.GetComponent<Pendant>();
         trajOFF = pendant.trajOFF;
-        trajectoires = pendant.trajectoires;
-
+        
         cible = GameObject.Find("Sphere");
         axe0 = GameObject.Find("OsBras1");
         axe1 = GameObject.Find("OsBras2");
@@ -93,12 +89,12 @@ public class Ecran : MonoBehaviour
     // Une fois par frame :
     void Update()
     {
-        // Mise à jour du mode du pendant
+        // Mise ï¿½ jour du mode du pendant
         mode = (Ecran.Mode)pendant.mode;
         trajOFF = pendant.trajOFF;
         axe = pendant.axe;
 
-        // Mise à jour de la position de la cible
+        // Mise ï¿½ jour de la position de la cible
         posX = cible.transform.position.x;
         posY = cible.transform.position.y;
         posZ = cible.transform.position.z;
@@ -126,7 +122,7 @@ public class Ecran : MonoBehaviour
                 break;
             // En mode AXES :
             case Mode.AXES:
-                // Mise à jour de la valeur d'"angle"
+                // Mise ï¿½ jour de la valeur d'"angle"
                 switch (axe)
                 {
                     case 0:
@@ -149,7 +145,7 @@ public class Ecran : MonoBehaviour
                         break;
                 }
                 // On affiche la valeur d'angle de l'axe courant
-                txtMode.text = "Mode\nAXES\n\n\n\nAxe n°" + (axe + 1) + "\nValeur : " + angle;
+                txtMode.text = "Mode\nAXES\n\n\n\nAxe nï¿½" + (axe + 1) + "\nValeur : " + angle;
 
                 // et la position de la torche
                 txtCoords.text = "\n\nX : " + posX + "\nY : " + posY + "\nZ : " + posZ;
@@ -157,14 +153,12 @@ public class Ecran : MonoBehaviour
             // En mode AUTO :
             case Mode.AUTO:
 
-                //var info = new DirectoryInfo(path);
-                //var fileInfo = info.GetFiles();
-                //foreach (var file in fileInfo) { }
-
                 // Si aucune trajectoire n'est lue :
                 if (trajOFF)
                 {
-                    // On affiche le curseur de sélection du fichier trajectoire
+                    DirectoryInfo info = new DirectoryInfo(pendant.path);
+                    FileInfo[] trajectoires = info.GetFiles();
+                    // On affiche le curseur de sï¿½lection du fichier trajectoire
                     txtMode.text = "Mode\nAUTO";
                     for (int i = 0; i < axe + 1; i++)
                     {
@@ -174,8 +168,8 @@ public class Ecran : MonoBehaviour
 
                     // et la liste des fichiers
                     txtCoords.text = "\n";
-                    for (int i = 0; i < trajectoires.Count; i++)
-                        txtCoords.text += "\n" + trajectoires[i].text;
+                    for (int i = 0; i < trajectoires.Length; i++)
+                        txtCoords.text += "\n" + trajectoires[i].Name;
                 }
                 // Si une trajectoire est en cours de lecture :
                 else
