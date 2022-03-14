@@ -6,8 +6,7 @@ public class Boutons : MonoBehaviour
 {
     public GameObject pendant;
 
-
-    // Pour l'interaction 2D uniquement (utile au débug)
+    #region Pour l'interaction 2D uniquement (utile au Debug)
     // Déclenchement d'un appui avec la souris
     public void OnClick()
     {
@@ -22,7 +21,9 @@ public class Boutons : MonoBehaviour
         OnTriggerStay(mouse);
     }
 
-    // Interactions 2D et 3D *********************************
+    #endregion
+
+    #region Interactions 2D et 3D
 
     // Lorsqu'on appuie sur un bouton
     private void OnTriggerEnter(Collider other)
@@ -84,4 +85,5 @@ public class Boutons : MonoBehaviour
         // Si le bouton est "Avance Rapide", on appelle sa fonction de relâchement
         if (this.tag == "FF") { pendant.GetComponent<Pendant>().OnBFFTriggerStay(); }
     }
+    #endregion
 }

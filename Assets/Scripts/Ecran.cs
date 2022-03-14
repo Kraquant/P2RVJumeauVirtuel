@@ -35,7 +35,6 @@ public class Ecran : MonoBehaviour
     private Mode mode;
     private int axe;
     private bool trajOFF;
-
     private enum Mode { COORDS, AXES, AUTO }
 
     // Au lancement :
@@ -156,8 +155,7 @@ public class Ecran : MonoBehaviour
                 // Si aucune trajectoire n'est lue :
                 if (trajOFF)
                 {
-                    DirectoryInfo info = new DirectoryInfo(pendant.path);
-                    FileInfo[] trajectoires = info.GetFiles();
+
                     // On affiche le curseur de s�lection du fichier trajectoire
                     txtMode.text = "Mode\nAUTO";
                     for (int i = 0; i < axe + 1; i++)
@@ -166,10 +164,9 @@ public class Ecran : MonoBehaviour
                     }
                     txtMode.text += "=>";
 
-                    // et la liste des fichiers
                     txtCoords.text = "\n";
-                    for (int i = 0; i < trajectoires.Length; i++)
-                        txtCoords.text += "\n" + trajectoires[i].Name;
+                    for (int i = 0; i < pendant.trajectoires.Length; i++)
+                        txtCoords.text += "\n" + pendant.trajectoires[i].Name;
                 }
                 // Si une trajectoire est en cours de lecture :
                 else

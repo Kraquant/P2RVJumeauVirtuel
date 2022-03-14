@@ -96,7 +96,7 @@ public class FileMovement : MonoBehaviour
         if (step == _stepMax)
         {
             Vector3 nextCoord = scaledCoords(trajectory.Points[0]);
-            Vector3 previousCoord =scaledCoords(trajectory.Points[_stepMax]);
+            Vector3 previousCoord = scaledCoords(trajectory.Points[_stepMax]);
             transform.position = Vector3.Lerp(previousCoord, nextCoord, timeStep - step);
         } else
         {
@@ -106,6 +106,8 @@ public class FileMovement : MonoBehaviour
         }
         Target2.transform.position = this.transform.position - (trajectory.Points[step]._normal).normalized*_Bras6Len;
     }
+
+
 
     private void moveKukaWithSpeed()
     {
@@ -201,12 +203,12 @@ public class FileMovement : MonoBehaviour
         clearPoints();
     }
 
-    public void loadNewFile(TextAsset newFile)
+    public void loadNewFile(string path)
     {
         stopPlaying();
-        if (newFile != null)
+        if (path != null)
         {
-            trajectory = new File(newFile);
+            trajectory = new File(path);
             _loadingFile = true;
         }
     }

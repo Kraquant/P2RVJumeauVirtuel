@@ -7,7 +7,7 @@ using System.IO;
 public class Pendant : MonoBehaviour
 {
     public string path;
-    public List<TextAsset> trajectoires; // Liste des fichiers trajectoires
+    public FileInfo[] trajectoires; // Liste des fichiers trajectoires
     public int axe; // Indice de l'axe, de la trajectoire ou du bras courant 
     public float pas_angle; // Pas de d�placement en angle par frame
     public float pas_pos; // Pas de d�placement en distance par frame
@@ -75,6 +75,7 @@ public class Pendant : MonoBehaviour
 
     // Variables de gestion des d�lais d'appui prolong�
     private float pressTime; // Date d'appui
+    private int readingInit; // Lancement de la lecture d'un fichier : 0 = pas en cours, 1 = en cours, 2 = fini
     private float delay; // Temps minimum d'appui pour le consid�rer comme "prolong�"
     private float pas_pos_current; // Pas en distance courant
     private float pas_angle_current; // Pas en angle courant
@@ -127,6 +128,18 @@ public class Pendant : MonoBehaviour
 
         DirectoryInfo info = new DirectoryInfo(path);
         trajectoires = info.GetFiles();
+        // On retire les fichiers META de la liste des trajectoires
+        FileInfo[] newTrajectoires = new FileInfo[trajectoires.Length / 2];
+        int j = 0;
+        foreach (FileInfo trajectoire in trajectoires)
+        {
+            if (!trajectoire.Name.Contains(".meta"))
+            {
+                newTrajectoires[j] = trajectoire;
+                j++;
+            }
+        }
+        trajectoires = newTrajectoires;
 
         boutonGauche.tag = "Minus";
         boutonDroit.tag = "Plus";
@@ -147,6 +160,7 @@ public class Pendant : MonoBehaviour
 
         pressTime = 0;
         delay = 1;
+        readingInit = 0;
 
         posX = 0;
         posY = 0;
@@ -292,16 +306,9 @@ public class Pendant : MonoBehaviour
             boutonStop.GetComponent<MeshRenderer>().material = bStop;
             boutonMode.GetComponent<MeshRenderer>().material = bModeG;
 
-            // On passe en contr�le via un fichier trajectoire
-            IKs[1].enabled = true;
-            IKs[2].enabled = true;
-
-            // Lancement de la lecture du fichier
-            mvmtScript.speed = 1;
-
-            TextAsset trajectoire = new TextAsset(path + "\\" + trajectoires[axe].Name);
-            mvmtScript.loadNewFile(trajectoire);
-            mvmtScript.togglePlaying();
+            // On lance la lecture du fichier trajectoire
+            readingInit = 1;
+            IKs[0].enabled = true;
         }
         // Si une trajectoire est d�j� en cours de lecture :
         else
@@ -337,6 +344,7 @@ public class Pendant : MonoBehaviour
 
             // On arr�te la lecture du fichier
             // et on quitte le contr�le via un fichier trajectoire
+            cible.transform.position = motionManager.transform.position;
             mvmtScript.stopPlaying();
             IKs[0].enabled = true;
             IKs[1].enabled = false;
@@ -510,6 +518,33 @@ public class Pendant : MonoBehaviour
             angle3 = 0;
             angle4 = 0;
             angle5 = 0;
+        }
+        // En mode AUTO :
+        // Avant de lancer la lecture d'un fichier trajectoire
+        else if (readingInit == 1)
+        {
+            // On déplace la torche vers la position de départ du fichier
+            cible.transform.position = Vector3.SmoothDamp(cible.transform.position, motionManager.transform.position, ref velocity, smoothTime);
+            if (cible.transform.position.x - motionManager.transform.position.x < 0.05f && cible.transform.position.y - motionManager.transform.position.y < 0.05f && cible.transform.position.z - motionManager.transform.position.z < 0.05f)
+            {
+                // Quand la position est atteinte, on lance la lecture du fichier
+                readingInit = 2;
+            }
+        }
+        // Pour lancer la lecture du fichier
+        else if (readingInit == 2)
+        {
+            // On passe en contr�le via un fichier trajectoire
+            IKs[0].enabled = false;
+            IKs[1].enabled = true;
+            IKs[2].enabled = true;
+            readingInit = 0;
+
+            // Lancement de la lecture du fichier
+            mvmtScript.speed = 1;
+            string trajectoire = path + "\\" + trajectoires[axe].Name;
+            mvmtScript.loadNewFile(trajectoire);
+            mvmtScript.togglePlaying();
         }
     }
 }
