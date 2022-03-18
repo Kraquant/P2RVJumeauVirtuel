@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1310,7 +1310,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileInteractionSphere: {fileID: 1872503801}
-  TrajectoryFile: {fileID: 4900000, guid: 79023c331f645c0409778e10a9c52b59, type: 3}
+  TrajectoryFile: 
   Texte3D: {fileID: 876702211}
   callReadFile: 0
   callStopPlaying: 0
@@ -1691,7 +1691,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5410174739900884081, guid: 556d1be26fd6da34f8336efc324187f3, type: 3}
       propertyPath: path
-      value: C:\Users\lucpa\Documents\0docs\Centrale\EI2\RV\P2RV\P2RVJumeauVirtuelV2\Assets\Trajectoires
+      value: /Trajectoires
       objectReference: {fileID: 0}
     - target: {fileID: 5410174739900884082, guid: 556d1be26fd6da34f8336efc324187f3, type: 3}
       propertyPath: m_Name

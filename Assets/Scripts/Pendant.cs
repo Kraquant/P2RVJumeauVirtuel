@@ -126,6 +126,8 @@ public class Pendant : MonoBehaviour
         boutonStop = GameObject.Find("StopButton");
         trajOFF = true;
 
+        //Modifiez ca les chacaux
+        path = (Application.dataPath + path).Replace("/", "\\");
         DirectoryInfo info = new DirectoryInfo(path);
         trajectoires = info.GetFiles();
         // On retire les fichiers META de la liste des trajectoires
