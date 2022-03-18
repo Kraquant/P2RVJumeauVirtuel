@@ -6,7 +6,7 @@ public class TestingFileMove : MonoBehaviour
 {
     // Start is called before the first frame update
     [SerializeField] GameObject fileInteractionSphere;
-    [SerializeField] TextAsset TrajectoryFile;
+    [SerializeField] string TrajectoryFile;
     [SerializeField] TextMesh Texte3D;
 
     [SerializeField] bool callReadFile;
