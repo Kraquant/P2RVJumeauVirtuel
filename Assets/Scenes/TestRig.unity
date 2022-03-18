@@ -625,7 +625,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileInteractionSphere: {fileID: 1872503801}
-  TrajectoryFile: {fileID: 4900000, guid: 2d595dd4165e86c4fb4071fd3905f71f, type: 3}
+  TrajectoryFile: {fileID: 4900000, guid: 79023c331f645c0409778e10a9c52b59, type: 3}
   Texte3D: {fileID: 876702211}
   callReadFile: 1
   callStopPlaying: 0
@@ -1279,6 +1279,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1995987251838791592, guid: a634a23b5ff3c9c4981a3e4b9a64f5a2, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 1995987251838791592, guid: a634a23b5ff3c9c4981a3e4b9a64f5a2, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 1995987251838791592, guid: a634a23b5ff3c9c4981a3e4b9a64f5a2, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 1995987251838791592, guid: a634a23b5ff3c9c4981a3e4b9a64f5a2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.23
+      objectReference: {fileID: 0}
     - target: {fileID: 2901639680724806736, guid: a634a23b5ff3c9c4981a3e4b9a64f5a2, type: 3}
       propertyPath: m_Name
       value: VR Rig Prefab
