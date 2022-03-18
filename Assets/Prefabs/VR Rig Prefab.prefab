@@ -301,11 +301,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e42336cbb1a7b1f4685f2cdd8e6a14f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  trajectoires:
-  - Traj 1
-  - Traj 2
-  - Trj 3
-  - Trajectoier
+  path: 
   axe: 0
   pas_angle: 0
   pas_pos: 0
