@@ -590,6 +590,6 @@ public class Pendant : MonoBehaviour
             mvmtScript.togglePlaying();
         }
         // Pour arreter la lecture du fichier
-        else if (readingInit == 3) { EndTrajectory(); }
+        else if (readingInit == 3 && !mvmtScript.isActive) { EndTrajectory(); }
     }
 }

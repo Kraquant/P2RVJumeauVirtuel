@@ -19,6 +19,7 @@ public class FileMovement : MonoBehaviour
     public File trajectory { get; private set; }
     public int[] playingProgress { get { return _playingProgress; } }
     public int[] readingStatus { get { return trajectory.readingStatus; } }
+    public bool isActive { get { return _isActive; } }
 
     //Private variables #########################################
     private bool _isActive;
@@ -51,6 +52,7 @@ public class FileMovement : MonoBehaviour
         _initPos = transform.position;
         _playingProgress = new int[2] { 0, 0 };
         _TorcheLen = (Torche.transform.position - OsBras5.transform.position).magnitude;
+        Target2.transform.position = this.transform.position + (Vector3.up).normalized * _TorcheLen;
         stopPlaying(); //Set/Reset every component      
     }
 
@@ -61,7 +63,7 @@ public class FileMovement : MonoBehaviour
         // Checking Reading Status
         if (_loadingFile)
         {
-            if(!trajectory.IsReading)
+            if (!trajectory.IsReading)
             {
                 _loadingFile = false;
                 OnFileDoneReading();
@@ -71,12 +73,12 @@ public class FileMovement : MonoBehaviour
         {
             moveKukaWithSpeed();
         }
-        else if (trajectory == null && Vector3.Distance(this.transform.position, _initPos)  > Vector3.kEpsilon) //Returning to origin
+        else if (trajectory == null && Vector3.Distance(this.transform.position, _initPos) > Vector3.kEpsilon) //Returning to origin
         {
             this.transform.position = Vector3.MoveTowards(this.transform.position, _initPos, speed * Time.deltaTime);
+            Target2.transform.position = this.transform.position + (Vector3.up).normalized * _TorcheLen;
         }
     }
-
 
     private void moveKukaWithSpeed()
     {
@@ -94,9 +96,10 @@ public class FileMovement : MonoBehaviour
                 remainingDistance -= distanceToNextTarget;
                 currentPos = _targetCoord;
                 _targetStep++;
-                if(_targetStep >= _stepMax) {
+                if (_targetStep >= _stepMax)
+                {
                     _targetStep = 0;
-                    if(!loop)
+                    if (!loop)
                     {
                         distanceReached = true;
                         endReading = true;
@@ -118,38 +121,6 @@ public class FileMovement : MonoBehaviour
         if (endReading) stopPlaying();
     }
 
-    private void moveKukaWithSpeedSave()
-    {
-        bool distanceReached = false;
-        float remainingDistance = speed * Time.deltaTime;
-        Vector3 currentPos = this.transform.position;
-        Vector3 _targetCoord = scaledCoords(trajectory.Points[_targetStep]);
-        while (!distanceReached)
-        {
-            float distanceToNextTarget = Vector3.Distance(currentPos, _targetCoord);
-            if (remainingDistance > distanceToNextTarget)
-            {
-                remainingDistance -= distanceToNextTarget;
-                currentPos = _targetCoord;
-                _targetStep++;
-                if (_targetStep >= _stepMax)
-                {
-                    _targetStep = 0;
-                }
-                _playingProgress[0] = _targetStep;
-                _targetCoord = scaledCoords(trajectory.Points[_targetStep]);
-            }
-
-            else
-            {
-                distanceReached = true;
-            }
-        }
-
-        this.transform.position = Vector3.MoveTowards(currentPos, _targetCoord, remainingDistance);
-        Target2.transform.position = this.transform.position - (trajectory.Points[_targetStep]._normal).normalized * _TorcheLen;
-
-    }
 
     private Vector3 scaledCoords(Point point)
     {
@@ -174,16 +145,16 @@ public class FileMovement : MonoBehaviour
         for (int i = 0; i < levels.Length; i++)
         {
             GameObject iLevel = new GameObject();
-            iLevel.name = "Soudure niveau " + (i+1).ToString();
+            iLevel.name = "Soudure niveau " + (i + 1).ToString();
             iLevel.transform.SetParent(_pointsHolder.transform);
             levels[i] = iLevel;
         }
         int filter = 0;
-        foreach(Point point in trajectory.Points)
+        foreach (Point point in trajectory.Points)
         {
             if (filter % pointResolution == 0)
             {
-                
+
                 GameObject pointObject = UnityEngine.Object.Instantiate(_billBoard);
                 pointObject.name = "PointID_" + point._lineID;
                 pointObject.transform.position = scaledCoords(point);
@@ -242,7 +213,7 @@ public class FileMovement : MonoBehaviour
             _reference = trajectory.Points[0]._coords;
             _tInit = Time.deltaTime;
             _targetStep = 0;
-            
+
             instantiatePoints();
         }
     }
@@ -253,13 +224,13 @@ public class FileMovement : MonoBehaviour
         else
         {
             float totalDistance = 0.0f;
-            for (int i = 0; i < trajectory.Points.Length -1 ; i++)
+            for (int i = 0; i < trajectory.Points.Length - 1; i++)
             {
-                totalDistance += Vector3.Distance(trajectory.Points[i]._coords * scale, trajectory.Points[i+1]._coords * scale);
+                totalDistance += Vector3.Distance(trajectory.Points[i]._coords * scale, trajectory.Points[i + 1]._coords * scale);
             }
 
             return totalDistance / (trajectory.Duration * 60);
         }
-        
+
     }
 }
