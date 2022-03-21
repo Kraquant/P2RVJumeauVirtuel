@@ -111,6 +111,20 @@ public class File
         threadReading.Start();
     }
 
+    public File(string path)
+    {
+        _pointList = new List<Point>();
+        _name = "Undefined name";
+        _duration = 0;
+        _maxLevel = 0;
+        _readingStatus = new int[2] { 0, 0 };
+
+        _fileText = System.IO.File.ReadAllText(path);
+
+        threadReading = new Thread(readFile);
+        threadReading.Start();
+    }
+
     private void readFile()
     {
         Debug.Log("Reading File...");

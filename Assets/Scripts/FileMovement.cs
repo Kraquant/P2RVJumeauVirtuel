@@ -29,9 +29,11 @@ public class FileMovement : MonoBehaviour
     private bool _loadingFile;
 
     private float _Bras6Len;
+    private float _TorcheLen;
     [SerializeField] GameObject Target2;
     [SerializeField] GameObject OsBras5;
     [SerializeField] GameObject OsBras6;
+    [SerializeField] GameObject Torche;
 
     //Variables for point drawing
     [SerializeField] GameObject _billBoard;
@@ -47,7 +49,10 @@ public class FileMovement : MonoBehaviour
         //Setup intern variables
         _initPos = transform.position;
         _playingProgress = new int[2] { 0, 0 };
-        _Bras6Len = (OsBras6.transform.position - OsBras5.transform.position).magnitude;
+        _TorcheLen = (OsBras6.transform.position - OsBras5.transform.position).magnitude;
+        _Bras6Len = (Torche.transform.position - OsBras5.transform.position).magnitude;
+        UnityEngine.Debug.Log(_Bras6Len);
+        UnityEngine.Debug.Log(_TorcheLen);
         stopPlaying(); //Set/Reset every component      
     }
 
@@ -96,7 +101,7 @@ public class FileMovement : MonoBehaviour
         if (step == _stepMax)
         {
             Vector3 nextCoord = scaledCoords(trajectory.Points[0]);
-            Vector3 previousCoord =scaledCoords(trajectory.Points[_stepMax]);
+            Vector3 previousCoord = scaledCoords(trajectory.Points[_stepMax]);
             transform.position = Vector3.Lerp(previousCoord, nextCoord, timeStep - step);
         } else
         {
@@ -106,6 +111,8 @@ public class FileMovement : MonoBehaviour
         }
         Target2.transform.position = this.transform.position - (trajectory.Points[step]._normal).normalized*_Bras6Len;
     }
+
+
 
     private void moveKukaWithSpeed()
     {
@@ -201,12 +208,12 @@ public class FileMovement : MonoBehaviour
         clearPoints();
     }
 
-    public void loadNewFile(TextAsset newFile)
+    public void loadNewFile(string path)
     {
         stopPlaying();
-        if (newFile != null)
+        if (path != null)
         {
-            trajectory = new File(newFile);
+            trajectory = new File(path);
             _loadingFile = true;
         }
     }
@@ -232,7 +239,7 @@ public class FileMovement : MonoBehaviour
         }
     }
 
-    private float computeSpeed() //Very Slow please de not use
+    private float computeSpeed() //Very Slow please do not use
     {
         if (trajectory == null) { return 0.0f; }
         else
