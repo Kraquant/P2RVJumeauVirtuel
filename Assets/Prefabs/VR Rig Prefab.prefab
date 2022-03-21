@@ -309,6 +309,7 @@ MonoBehaviour:
   pas_pos_rap: 0
   smoothTime: 0.3
   velocity: {x: 0, y: 0, z: 0}
+  mvmtScript: {fileID: 0}
   bPlus: {fileID: 2100000, guid: d764055b85c63af428d0c3975129ed5c, type: 2}
   bMoins: {fileID: 2100000, guid: 91504b99b3ef8684d990777aafba0152, type: 2}
   bPlay: {fileID: 2100000, guid: 23e075cda68835d4096a93cbfa4566d1, type: 2}

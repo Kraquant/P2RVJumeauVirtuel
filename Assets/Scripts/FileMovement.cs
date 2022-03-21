@@ -18,6 +18,7 @@ public class FileMovement : MonoBehaviour
     public int pointResolution = 10; //Draw one point every pointResolution
     public File trajectory { get; private set; }
     public int[] playingProgress { get { return _playingProgress; } }
+    public int[] readingStatus { get { return trajectory.readingStatus; } }
 
     //Private variables #########################################
     private bool _isActive;
