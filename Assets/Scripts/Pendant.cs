@@ -118,7 +118,7 @@ public class Pendant : MonoBehaviour
         axe3 = GameObject.Find("OsBras4");
         axe4 = GameObject.Find("OsBras5");
         axe5 = GameObject.Find("OsBras6");
-        torche = GameObject.Find("Torche_end");
+        torche = GameObject.Find("torcheTresExtreme");
         cible.transform.SetParent(null);
 
         boutonDroit = GameObject.Find("ContextualRight");
