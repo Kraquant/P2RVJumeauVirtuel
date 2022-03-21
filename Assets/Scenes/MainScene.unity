@@ -426,6 +426,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: -0.022
       objectReference: {fileID: 0}
+    - target: {fileID: 1995987252590034824, guid: a634a23b5ff3c9c4981a3e4b9a64f5a2, type: 3}
+      propertyPath: m_ModelPrefab
+      value: 
+      objectReference: {fileID: 1414954454193692745, guid: a0e7a5f2a1d7f3d40a490140d7770a42, type: 3}
     - target: {fileID: 2901639680724806736, guid: a634a23b5ff3c9c4981a3e4b9a64f5a2, type: 3}
       propertyPath: m_Name
       value: VR Rig Prefab

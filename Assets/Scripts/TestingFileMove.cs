@@ -26,7 +26,7 @@ public class TestingFileMove : MonoBehaviour
         //if (controller.trajectory != null) Debug.Log(controller.trajectory.readingStatus[0] + "/" + controller.trajectory.readingStatus[1]);
         if (callReadFile)
         {
-            controller.loadNewFile((Application.dataPath + "/Trajectoires/3D Tests.txt").Replace("/", "\\"));
+            controller.loadNewFile((Application.dataPath + "/Trajectoires/3D.txt").Replace("/", "\\"));
             callReadFile = false;
         }
 
