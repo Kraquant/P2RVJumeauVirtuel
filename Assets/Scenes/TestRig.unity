@@ -1879,7 +1879,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 0.02
   scale: 0.003
-  loop: 1
+  loop: 0
   dotMainCol: {r: 0.72207546, g: 0, b: 1, a: 1}
   pointResolution: 10
   _duration: 50
@@ -3121,7 +3121,7 @@ MonoBehaviour:
   pendant: {fileID: 0}
   txtMode: {fileID: 7647118446550784212}
   txtCoords: {fileID: 7647118446857777211}
-  slider: {fileID: 1779738750}
+  objSlider: {fileID: 1779738750}
 --- !u!1 &5384605122438610122
 GameObject:
   m_ObjectHideFlags: 0
