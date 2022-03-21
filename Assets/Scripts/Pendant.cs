@@ -52,9 +52,12 @@ public class Pendant : MonoBehaviour
 
     // Textures des boutons du pendant
     public Material bPlus;
+    public Material bPlusL;
     public Material bMoins;
+    public Material bMoinsL;
     public Material bPlay;
     public Material bFF;
+    public Material bFFL;
     public Material bFFG;
     public Material bMode;
     public Material bModeG;
@@ -286,6 +289,8 @@ public class Pendant : MonoBehaviour
     {
         // On lance le chronometre
         pressTime = Time.time;
+        // On met à jour l'apparence du bouton
+        boutonGauche.GetComponent<MeshRenderer>().material = bMoinsL;
     }
 
     // A l'appui sur le bouton "Plus"
@@ -293,6 +298,8 @@ public class Pendant : MonoBehaviour
     {
         // On lance le chronometre
         pressTime = Time.time;
+        // On met à jour l'apparence du bouton
+        boutonDroit.GetComponent<MeshRenderer>().material = bPlusL;
     }
 
     // A l'appui sur le bouton "Lecture/Pause"
@@ -327,9 +334,14 @@ public class Pendant : MonoBehaviour
     // A l'appui sur le bouton "Avance Rapide"
     public void OnBFFTriggerEnter()
     {
-        pressTime = Time.time; // On lance le chronometre
-        mvmtScript.speed *= 2; // On multiplie la vitesse de lecture par 2 (appui bref)
-        if (mvmtScript.speed > 64) { mvmtScript.speed = 1; } // Si la vitesse etait deja au plus haut, on la reinitialise
+        // On lance le chronometre
+        pressTime = Time.time;
+        // On multiplie la vitesse de lecture par 2 (appui bref)
+        mvmtScript.speed *= 2;
+        // Si la vitesse etait deja au plus haut, on la reinitialise
+        if (mvmtScript.speed > 64) { mvmtScript.speed = 1; }
+        // On met à jour l'apparence du bouton
+        boutonDroit.GetComponent<MeshRenderer>().material = bFFL;
     }
 
     // A l'appui sur le bouton "Stop"
@@ -472,6 +484,20 @@ public class Pendant : MonoBehaviour
     {
         // Si c'etait un appui long, on reinitialise la vitesse de lecture
         if (Time.time - pressTime > delay) { mvmtScript.speed = 1; }
+        // On met à jour l'apparence du bouton
+        boutonDroit.GetComponent<MeshRenderer>().material = bFF;
+    }
+
+    public void OnBMinusTriggerExit()
+    {
+        // On met à jour l'apparence du bouton
+        boutonGauche.GetComponent<MeshRenderer>().material = bMoins;
+    }
+
+    public void OnBPlusTriggerExit()
+    {
+        // On met à jour l'apparence du bouton
+        boutonDroit.GetComponent<MeshRenderer>().material = bPlus;
     }
 
     #endregion

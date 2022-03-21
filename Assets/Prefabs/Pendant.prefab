@@ -222,6 +222,34 @@ BoxCollider:
   m_Size: {x: 0.00061656575, y: 0.0004608428, z: 0.00012157377}
   m_Center: {x: 0.000029251154, y: -9.313226e-10, z: 0}
 --- !u!1 &3860268589369893722
+  path: \Trajectoires
+  axe: 0
+  pas_angle: 0
+  pas_pos: 0
+  pas_angle_rap: 0
+  pas_pos_rap: 0
+  smoothTime: 0.3
+  velocity: {x: 0, y: 0, z: 0}
+  mvmtScript: {fileID: 0}
+  bPlus: {fileID: 2100000, guid: d764055b85c63af428d0c3975129ed5c, type: 2}
+  bPlusL: {fileID: 2100000, guid: 60e7f8d402f769148af9a8edad5b5d23, type: 2}
+  bMoins: {fileID: 2100000, guid: 91504b99b3ef8684d990777aafba0152, type: 2}
+  bMoinsL: {fileID: 2100000, guid: fe5e46bfd5af11b4b8fdb1e08cbb68cb, type: 2}
+  bPlay: {fileID: 2100000, guid: 23e075cda68835d4096a93cbfa4566d1, type: 2}
+  bFF: {fileID: 2100000, guid: 6ba1ff85d3376eb46a2a7e5c81987a9a, type: 2}
+  bFFL: {fileID: 2100000, guid: b59ec0e21f91bb34b9bd347f7cda5a8e, type: 2}
+  bFFG: {fileID: 2100000, guid: 80c212cf37811084d82210ef822380a6, type: 2}
+  bMode: {fileID: 2100000, guid: b60989392cbb1214da9834e0aff00d01, type: 2}
+  bModeG: {fileID: 2100000, guid: 3dbcba025b0d028488b9b7784d805e1c, type: 2}
+  bStop: {fileID: 2100000, guid: 1b0286c5dff982e47925a915a9778122, type: 2}
+  bStopG: {fileID: 2100000, guid: d289cd27348c71d4f82fc8a7c4120857, type: 2}
+  bArrUp: {fileID: 2100000, guid: a66fd71705c6c5346ae5763ad6c8a530, type: 2}
+  bArrUpG: {fileID: 2100000, guid: dc05d2820f368324cad932bcade89a67, type: 2}
+  bArrDo: {fileID: 2100000, guid: 13f7ccf7d283aaf45bf244563d189350, type: 2}
+  bArrDoG: {fileID: 2100000, guid: d6cd95ca5953a344a88f3659031bb6c0, type: 2}
+  trajOFF: 0
+  mode: 0
+--- !u!1 &988102122185937703
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
