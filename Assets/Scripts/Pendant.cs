@@ -52,9 +52,12 @@ public class Pendant : MonoBehaviour
 
     // Textures des boutons du pendant
     public Material bPlus;
+    public Material bPlusL;
     public Material bMoins;
+    public Material bMoinsL;
     public Material bPlay;
     public Material bFF;
+    public Material bFFL;
     public Material bFFG;
     public Material bMode;
     public Material bModeG;
@@ -76,7 +79,8 @@ public class Pendant : MonoBehaviour
 
     // Variables de gestion des delais d'appui prolonge
     private float pressTime; // Date d'appui
-    private int readingInit; // Lancement de la lecture d'un fichier : 0 = pas en cours, 1 = en cours, 2 = fini
+    private int readingInit; // Lancement de la lecture d'un fichier :
+                             // 0 = pas en cours, 1 = en cours, 2 = fini, 3 = trajectoire en cours de lecture
     private float delay; // Temps minimum d'appui pour le considerer comme "prolonge"
     private float pas_pos_current; // Pas en distance courant
     private float pas_angle_current; // Pas en angle courant
@@ -162,6 +166,7 @@ public class Pendant : MonoBehaviour
         pas_pos_rap = 0.15f;
         pas_angle = 1;
         pas_pos = 0.05f;
+        smoothTime = 0.3f;
 
         pressTime = 0;
         delay = 1;
@@ -180,6 +185,26 @@ public class Pendant : MonoBehaviour
 
         limit1 = 0;
         limit2 = 0;
+    }
+
+    void EndTrajectory()
+    {
+        readingInit = 0;
+        trajOFF = true;
+        // On met a jour l'aspect des boutons actifs et inactifs
+        boutonArrUp.GetComponent<MeshRenderer>().material = bArrUp;
+        boutonArrDo.GetComponent<MeshRenderer>().material = bArrDo;
+        boutonDroit.GetComponent<MeshRenderer>().material = bFFG;
+        boutonStop.GetComponent<MeshRenderer>().material = bStopG;
+        boutonMode.GetComponent<MeshRenderer>().material = bMode;
+
+        // On arrete la lecture du fichier
+        // et on quitte le controle via un fichier trajectoire
+        cible.transform.position = motionManager.transform.position;
+        mvmtScript.stopPlaying();
+        IKs[1].enabled = false;
+        IKs[2].enabled = false;
+        IKs[0].enabled = true;
     }
 
     // A l'appui sur le bouton "Fleche Bas"
@@ -286,6 +311,8 @@ public class Pendant : MonoBehaviour
     {
         // On lance le chronometre
         pressTime = Time.time;
+        // On met à jour l'apparence du bouton
+        boutonGauche.GetComponent<MeshRenderer>().material = bMoinsL;
     }
 
     // A l'appui sur le bouton "Plus"
@@ -293,6 +320,8 @@ public class Pendant : MonoBehaviour
     {
         // On lance le chronometre
         pressTime = Time.time;
+        // On met à jour l'apparence du bouton
+        boutonDroit.GetComponent<MeshRenderer>().material = bPlusL;
     }
 
     // A l'appui sur le bouton "Lecture/Pause"
@@ -327,33 +356,21 @@ public class Pendant : MonoBehaviour
     // A l'appui sur le bouton "Avance Rapide"
     public void OnBFFTriggerEnter()
     {
-        pressTime = Time.time; // On lance le chronometre
-        mvmtScript.speed *= 2; // On multiplie la vitesse de lecture par 2 (appui bref)
-        if (mvmtScript.speed > 64) { mvmtScript.speed = 1; } // Si la vitesse etait deja au plus haut, on la reinitialise
+        // On lance le chronometre
+        pressTime = Time.time;
+        // On multiplie la vitesse de lecture par 2 (appui bref)
+        mvmtScript.speed *= 2;
+        // Si la vitesse etait deja au plus haut, on la reinitialise
+        if (mvmtScript.speed > 128) { mvmtScript.speed = 1; }
+        // On met à jour l'apparence du bouton
+        boutonDroit.GetComponent<MeshRenderer>().material = bFFL;
     }
 
     // A l'appui sur le bouton "Stop"
     public void OnBSTOPTriggerEnter()
     {
         // Le bouton n'est actif que si une trajectoire est en cours de lecture
-        if (!trajOFF)
-        {
-            trajOFF = true;
-            // On met a jour l'aspect des boutons actifs et inactifs
-            boutonArrUp.GetComponent<MeshRenderer>().material = bArrUp;
-            boutonArrDo.GetComponent<MeshRenderer>().material = bArrDo;
-            boutonDroit.GetComponent<MeshRenderer>().material = bFFG;
-            boutonStop.GetComponent<MeshRenderer>().material = bStopG;
-            boutonMode.GetComponent<MeshRenderer>().material = bMode;
-
-            // On arrete la lecture du fichier
-            // et on quitte le controle via un fichier trajectoire
-            cible.transform.position = motionManager.transform.position;
-            mvmtScript.stopPlaying();
-            IKs[1].enabled = false;
-            IKs[2].enabled = false;
-            IKs[0].enabled = true;
-        }
+        if (!trajOFF) { EndTrajectory(); }
     }
 
     #region OnTriggerStays
@@ -472,6 +489,20 @@ public class Pendant : MonoBehaviour
     {
         // Si c'etait un appui long, on reinitialise la vitesse de lecture
         if (Time.time - pressTime > delay) { mvmtScript.speed = 1; }
+        // On met à jour l'apparence du bouton
+        boutonDroit.GetComponent<MeshRenderer>().material = bFF;
+    }
+
+    public void OnBMinusTriggerExit()
+    {
+        // On met à jour l'apparence du bouton
+        boutonGauche.GetComponent<MeshRenderer>().material = bMoins;
+    }
+
+    public void OnBPlusTriggerExit()
+    {
+        // On met à jour l'apparence du bouton
+        boutonDroit.GetComponent<MeshRenderer>().material = bPlus;
     }
 
     #endregion
@@ -550,7 +581,7 @@ public class Pendant : MonoBehaviour
             IKs[0].enabled = false;
             IKs[1].enabled = true;
             IKs[2].enabled = true;
-            readingInit = 0;
+            readingInit = 3;
 
             // Lancement de la lecture du fichier
             mvmtScript.speed = 1;
@@ -558,5 +589,7 @@ public class Pendant : MonoBehaviour
             mvmtScript.loadNewFile(trajectoire);
             mvmtScript.togglePlaying();
         }
+        // Pour arreter la lecture du fichier
+        else if (readingInit == 3 && !mvmtScript.isActive) { EndTrajectory(); }
     }
 }
