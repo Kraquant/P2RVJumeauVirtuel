@@ -87,8 +87,20 @@ public class Boutons : MonoBehaviour
     // Quand on relache un bouton
     private void OnTriggerExit(Collider other)
     {
-        // Si le bouton est "Avance Rapide", on appelle sa fonction de relachement
-        if (this.tag == "FF") { pendant.GetComponent<Pendant>().OnBFFTriggerExit(); }
+        string bouton = this.tag;
+        // On appelle la fonction de relachement correspondante
+        switch (bouton)
+        {
+            case "Plus":
+                pendant.GetComponent<Pendant>().OnBPlusTriggerExit();
+                break;
+            case "Minus":
+                pendant.GetComponent<Pendant>().OnBMinusTriggerExit();
+                break;
+            case "FF":
+                pendant.GetComponent<Pendant>().OnBFFTriggerExit();
+                break;
+        }
     }
     #endregion
 }
