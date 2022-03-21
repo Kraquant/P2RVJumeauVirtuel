@@ -28,11 +28,11 @@ public class FileMovement : MonoBehaviour
     private Vector3 _reference;
     private bool _loadingFile;
 
-    private float _Bras6Len;
+    //private float _Bras6Len;
     private float _TorcheLen;
     [SerializeField] GameObject Target2;
     [SerializeField] GameObject OsBras5;
-    [SerializeField] GameObject OsBras6;
+    //[SerializeField] GameObject OsBras6;
     [SerializeField] GameObject Torche;
 
     //Variables for point drawing
@@ -49,10 +49,7 @@ public class FileMovement : MonoBehaviour
         //Setup intern variables
         _initPos = transform.position;
         _playingProgress = new int[2] { 0, 0 };
-        _TorcheLen = (OsBras6.transform.position - OsBras5.transform.position).magnitude;
-        _Bras6Len = (Torche.transform.position - OsBras5.transform.position).magnitude;
-        UnityEngine.Debug.Log(_Bras6Len);
-        UnityEngine.Debug.Log(_TorcheLen);
+        _TorcheLen = (Torche.transform.position - OsBras5.transform.position).magnitude;
         stopPlaying(); //Set/Reset every component      
     }
 
@@ -79,42 +76,48 @@ public class FileMovement : MonoBehaviour
         }
     }
 
-    private void moveKuka()
-    {
-        float elapsedTime = Time.time - _tInit;
-        if (elapsedTime > _duration)
-        {
-            if (loop)
-            {
-                _tInit = Time.time;
-                elapsedTime = 0.0f;
-            }
-            else
-            {
-                stopPlaying();
-            }
-        }
-
-        float timeStep = _stepMax * elapsedTime / _duration;
-        int step = Mathf.FloorToInt(timeStep);
-        _playingProgress[0] = step;
-        if (step == _stepMax)
-        {
-            Vector3 nextCoord = scaledCoords(trajectory.Points[0]);
-            Vector3 previousCoord = scaledCoords(trajectory.Points[_stepMax]);
-            transform.position = Vector3.Lerp(previousCoord, nextCoord, timeStep - step);
-        } else
-        {
-            Vector3 nextCoord = scaledCoords(trajectory.Points[step +1]);
-            Vector3 previousCoord = scaledCoords(trajectory.Points[step]);
-            transform.position = Vector3.Lerp(previousCoord, nextCoord, timeStep - step);
-        }
-        Target2.transform.position = this.transform.position - (trajectory.Points[step]._normal).normalized*_Bras6Len;
-    }
-
-
 
     private void moveKukaWithSpeed()
+    {
+        bool distanceReached = false;
+        float remainingDistance = speed * Time.deltaTime;
+        Vector3 currentPos = this.transform.position;
+        Vector3 _targetCoord = scaledCoords(trajectory.Points[_targetStep]);
+
+        bool endReading = false;
+        while (!distanceReached)
+        {
+            float distanceToNextTarget = Vector3.Distance(currentPos, _targetCoord);
+            if (remainingDistance > distanceToNextTarget)
+            {
+                remainingDistance -= distanceToNextTarget;
+                currentPos = _targetCoord;
+                _targetStep++;
+                if(_targetStep >= _stepMax) {
+                    _targetStep = 0;
+                    if(!loop)
+                    {
+                        distanceReached = true;
+                        endReading = true;
+                    }
+                }
+                _playingProgress[0] = _targetStep;
+                _targetCoord = scaledCoords(trajectory.Points[_targetStep]);
+            }
+
+            else
+            {
+                distanceReached = true;
+            }
+        }
+
+        this.transform.position = Vector3.MoveTowards(currentPos, _targetCoord, remainingDistance);
+        Target2.transform.position = this.transform.position - (trajectory.Points[_targetStep]._normal).normalized * _TorcheLen;
+
+        if (endReading) stopPlaying();
+    }
+
+    private void moveKukaWithSpeedSave()
     {
         bool distanceReached = false;
         float remainingDistance = speed * Time.deltaTime;
@@ -128,7 +131,10 @@ public class FileMovement : MonoBehaviour
                 remainingDistance -= distanceToNextTarget;
                 currentPos = _targetCoord;
                 _targetStep++;
-                if(_targetStep >= _stepMax) { _targetStep = 0; }
+                if (_targetStep >= _stepMax)
+                {
+                    _targetStep = 0;
+                }
                 _playingProgress[0] = _targetStep;
                 _targetCoord = scaledCoords(trajectory.Points[_targetStep]);
             }
@@ -140,9 +146,10 @@ public class FileMovement : MonoBehaviour
         }
 
         this.transform.position = Vector3.MoveTowards(currentPos, _targetCoord, remainingDistance);
-        Target2.transform.position = this.transform.position - (trajectory.Points[_targetStep]._normal).normalized * _Bras6Len;
+        Target2.transform.position = this.transform.position - (trajectory.Points[_targetStep]._normal).normalized * _TorcheLen;
 
     }
+
     private Vector3 scaledCoords(Point point)
     {
         return _initPos + (_reference - point._coords) * scale;

@@ -6,7 +6,6 @@ public class TestingFileMove : MonoBehaviour
 {
     // Start is called before the first frame update
     [SerializeField] GameObject fileInteractionSphere;
-    [SerializeField] string TrajectoryFile;
     [SerializeField] TextMesh Texte3D;
 
     [SerializeField] bool callReadFile;
@@ -27,7 +26,7 @@ public class TestingFileMove : MonoBehaviour
         //if (controller.trajectory != null) Debug.Log(controller.trajectory.readingStatus[0] + "/" + controller.trajectory.readingStatus[1]);
         if (callReadFile)
         {
-            controller.loadNewFile(TrajectoryFile);
+            controller.loadNewFile((Application.dataPath + "/Trajectoires/3D Tests.txt").Replace("/", "\\"));
             callReadFile = false;
         }
 
