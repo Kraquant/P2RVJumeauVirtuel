@@ -13,7 +13,7 @@ public class FileMovement : MonoBehaviour
     //Public variables ##########################################
     [Range(0, 4.0f)] public float speed = 1.0f;
     public float scale = 0.001f;
-    public bool loop = true;
+    public bool loop = false;
     public Color dotMainCol = Color.white;
     public int pointResolution = 10; //Draw one point every pointResolution
     public File trajectory { get; private set; }
