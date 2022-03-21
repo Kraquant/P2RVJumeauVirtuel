@@ -134,16 +134,16 @@ public class File
         
 
         //Regex patterns #################################################################################
-        string patternX = "(?<=X)[\\d\\-]?\\w+[\\.]?\\w+[\\.]?(?=\\s)";
-        string patternY = "(?<=Y)[\\d\\-]?\\w+[\\.]?\\w+[\\.]?(?=\\s)";
-        string patternZ = "(?<=Z)[\\d\\-]?\\w+[\\.]?\\w+[\\.]?(?=\\s)";
+        string patternX = "(?<=X)[\\d\\-]?\\w+[\\.]?(\\w+[\\.]?(?=\\s)|(?=\\.))";
+        string patternY = "(?<=Y)[\\d\\-]?\\w+[\\.]?(\\w+[\\.]?(?=\\s)|(?=\\.))";
+        string patternZ = "(?<=Z)[\\d\\-]?\\w+[\\.]?(\\w+[\\.]?(?=\\s)|(?=\\.))";
 
-        string patternA3 = "(?<=A3=)[\\d\\-]?\\w+[\\.]?\\w+[\\.]?(?=\\s)";
-        string patternB3 = "(?<=B3=)[\\d\\-]?\\w+[\\.]?\\w+[\\.]?(?=\\s)";
-        string patternC3 = "(?<=C3=)[\\d\\-]?\\w+[\\.]?\\w+[\\.]?(?=\\s)";
+        string patternA3 = "(?<=A3=)[\\d\\-]?\\w+[\\.]?(\\w+[\\.]?(?=\\s)|(?=\\.))";
+        string patternB3 = "(?<=B3=)[\\d\\-]?\\w+[\\.]?(\\w+[\\.]?(?=\\s)|(?=\\.))";
+        string patternC3 = "(?<=C3=)[\\d\\-]?\\w+[\\.]?(\\w+[\\.]?(?=\\s)|(?=\\.))";
 
-        string patternE1 = "(?<=E1=)[\\d\\-]?\\w+[\\.]?\\w+[\\.]?(?=\\s)";
-        string patternE2 = "(?<=E2=)[\\d\\-]?\\w+[\\.]?\\w+[\\.]?((?=\\s)|$)"; //Different pattern because E2 can be at the end of the line
+        string patternE1 = "(?<=E1=)[\\d\\-]?\\w+[\\.]?(\\w+[\\.]?(?=\\s)|(?=\\.))";
+        string patternE2 = "(?<=E2=)[\\d\\-]?\\w+[\\.]?(\\w+[\\.]?(?=\\s)|(?=\\.)|$)"; //Different pattern because E2 can be at the end of the line
 
         string patternN = "(?<=N)[\\-]?\\w+[\\.]?\\w+(?=\\s)";
         string patternArc = "(?<=H45=)\\w+((?=\\s)|$)";
@@ -234,6 +234,14 @@ public class File
             {
                 if (NLine.Success)
                 {
+                    Debug.Log(xLine.Success);
+                    Debug.Log(yLine.Success);
+                    Debug.Log(zLine.Success);
+                    Debug.Log(A3Line.Success);
+                    Debug.Log(B3Line.Success);
+                    Debug.Log(C3Line.Success);
+                    Debug.Log(E1Line.Success);
+                    Debug.Log(E2Line.Success);
                     Debug.LogWarning("A point might not have been added. REF N:" + NLine.Value + " at line:\n" + line);
                 }
                 else
