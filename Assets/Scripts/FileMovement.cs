@@ -19,6 +19,7 @@ public class FileMovement : MonoBehaviour
     public File trajectory { get; private set; }
     public int[] playingProgress { get { return _playingProgress; } }
     public int[] readingStatus { get { return trajectory.readingStatus; } }
+    public bool isActive { get { return _isActive; } }
 
     //Private variables #########################################
     private bool _isActive;
@@ -77,7 +78,6 @@ public class FileMovement : MonoBehaviour
         }
     }
 
-
     private void moveKukaWithSpeed()
     {
         bool distanceReached = false;
@@ -94,9 +94,10 @@ public class FileMovement : MonoBehaviour
                 remainingDistance -= distanceToNextTarget;
                 currentPos = _targetCoord;
                 _targetStep++;
-                if(_targetStep >= _stepMax) {
+                if (_targetStep >= _stepMax)
+                {
                     _targetStep = 0;
-                    if(!loop)
+                    if (!loop)
                     {
                         distanceReached = true;
                         endReading = true;
@@ -118,38 +119,6 @@ public class FileMovement : MonoBehaviour
         if (endReading) stopPlaying();
     }
 
-    private void moveKukaWithSpeedSave()
-    {
-        bool distanceReached = false;
-        float remainingDistance = speed * Time.deltaTime;
-        Vector3 currentPos = this.transform.position;
-        Vector3 _targetCoord = scaledCoords(trajectory.Points[_targetStep]);
-        while (!distanceReached)
-        {
-            float distanceToNextTarget = Vector3.Distance(currentPos, _targetCoord);
-            if (remainingDistance > distanceToNextTarget)
-            {
-                remainingDistance -= distanceToNextTarget;
-                currentPos = _targetCoord;
-                _targetStep++;
-                if (_targetStep >= _stepMax)
-                {
-                    _targetStep = 0;
-                }
-                _playingProgress[0] = _targetStep;
-                _targetCoord = scaledCoords(trajectory.Points[_targetStep]);
-            }
-
-            else
-            {
-                distanceReached = true;
-            }
-        }
-
-        this.transform.position = Vector3.MoveTowards(currentPos, _targetCoord, remainingDistance);
-        Target2.transform.position = this.transform.position - (trajectory.Points[_targetStep]._normal).normalized * _TorcheLen;
-
-    }
 
     private Vector3 scaledCoords(Point point)
     {
