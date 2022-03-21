@@ -188,17 +188,20 @@ public class Ecran : MonoBehaviour
 
                     // Et l'avancee de la lecture du fichier ou de la trajectoire
                     objSlider.SetActive(true);
-                    // Si on lit une trajectoire :
-                    if (!pendant.mvmtScript.trajectory.IsReading && pendant.mvmtScript.playingProgress[1] != 0)
+                    if (pendant.mvmtScript.trajectory != null)
                     {
-                        slider.value = (float)pendant.mvmtScript.playingProgress[0] / (float)pendant.mvmtScript.playingProgress[1];
+                        // Si on lit une trajectoire :
+                        if (!pendant.mvmtScript.trajectory.IsReading && pendant.mvmtScript.playingProgress[1] != 0)
+                        {
+                            slider.value = (float)pendant.mvmtScript.playingProgress[0] / (float)pendant.mvmtScript.playingProgress[1];
 
-                        // On affiche la vitesse de lecture
-                        txtMode.text = "Mode\nAUTO\n\n\n\nVitesse : " + pendant.mvmtScript.speed;
+                            // On affiche la vitesse de lecture
+                            txtMode.text = "Mode\nAUTO\n\n\n\nVitesse : " + pendant.mvmtScript.speed;
+                        }
+                        // Si on lit un fichier :
+                        else if (pendant.mvmtScript.trajectory.IsReading && pendant.mvmtScript.readingStatus[1] != 0)
+                        { slider.value = (float)pendant.mvmtScript.readingStatus[0] / (float)pendant.mvmtScript.readingStatus[1]; }
                     }
-                    // Si on lit un fichier
-                    else if (pendant.mvmtScript.trajectory.IsReading && pendant.mvmtScript.readingStatus[1] != 0)
-                    { slider.value = (float)pendant.mvmtScript.readingStatus[0] / (float)pendant.mvmtScript.readingStatus[1]; }
                 }
                 break;
         }
