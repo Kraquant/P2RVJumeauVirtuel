@@ -12,11 +12,13 @@ public class Ecran : MonoBehaviour
     // Script du pendant
     public Pendant pendant;
 
-    // Texte affich� � l'�cran
+    // Texte affiche a l'ecran
     public Text txtMode;
     public Text txtCoords;
+    public GameObject objSlider;
+    private Slider slider;
 
-    // Param�tres de position de la torche
+    // Parametres de position de la torche
     private float angle;
     private float posX;
     private float posY;
@@ -31,7 +33,7 @@ public class Ecran : MonoBehaviour
     private GameObject axe4;
     private GameObject axe5;
 
-    // Mode et param�tres du pendant
+    // Mode et parametres du pendant
     private Mode mode;
     private int axe;
     private bool trajOFF;
@@ -41,7 +43,7 @@ public class Ecran : MonoBehaviour
     void Start()
     {
         // Initialisation de toutes les variables
-        // et r�cup�ration des param�tres ext�rieurs
+        // et recuperation des parametres exterieurs
 
         pendant = pendantObject.GetComponent<Pendant>();
         trajOFF = pendant.trajOFF;
@@ -60,6 +62,9 @@ public class Ecran : MonoBehaviour
 
         mode = (Ecran.Mode)pendant.mode;
         axe = pendant.axe;
+        objSlider.SetActive(false);
+        slider = objSlider.GetComponent<Slider>();
+        slider.value = 0;
 
         // "angle" prend la valeur d'angle de l'axe courant
         switch (axe)
@@ -88,12 +93,12 @@ public class Ecran : MonoBehaviour
     // Une fois par frame :
     void Update()
     {
-        // Mise � jour du mode du pendant
+        // Mise a jour du mode du pendant
         mode = (Ecran.Mode)pendant.mode;
         trajOFF = pendant.trajOFF;
         axe = pendant.axe;
 
-        // Mise � jour de la position de la cible
+        // Mise a jour de la position de la cible
         posX = cible.transform.position.x;
         posY = cible.transform.position.y;
         posZ = cible.transform.position.z;
@@ -118,10 +123,13 @@ public class Ecran : MonoBehaviour
 
                 // et la position de la torche
                 txtCoords.text = "\n\nX : " + posX + "\nY : " + posY + "\nZ : " + posZ;
+
+                objSlider.SetActive(false);
+                slider.value = 0;
                 break;
             // En mode AXES :
             case Mode.AXES:
-                // Mise � jour de la valeur d'"angle"
+                // Mise a jour de la valeur d'"angle"
                 switch (axe)
                 {
                     case 0:
@@ -144,10 +152,13 @@ public class Ecran : MonoBehaviour
                         break;
                 }
                 // On affiche la valeur d'angle de l'axe courant
-                txtMode.text = "Mode\nAXES\n\n\n\nAxe n�" + (axe + 1) + "\nValeur : " + angle;
+                txtMode.text = "Mode\nAXES\n\n\n\nAxe n. " + (axe + 1) + "\nValeur : " + angle;
 
                 // et la position de la torche
                 txtCoords.text = "\n\nX : " + posX + "\nY : " + posY + "\nZ : " + posZ;
+
+                objSlider.SetActive(false);
+                slider.value = 0;
                 break;
             // En mode AUTO :
             case Mode.AUTO:
@@ -156,24 +167,38 @@ public class Ecran : MonoBehaviour
                 if (trajOFF)
                 {
 
-                    // On affiche le curseur de s�lection du fichier trajectoire
+                    // On affiche le curseur de selection du fichier trajectoire
                     txtMode.text = "Mode\nAUTO";
-                    for (int i = 0; i < axe + 1; i++)
-                    {
-                        txtMode.text += "\n";
-                    }
+                    for (int i = 0; i < axe + 1; i++) { txtMode.text += "\n"; }
                     txtMode.text += "=>";
 
+                    // Et les fichiers correspondants
                     txtCoords.text = "\n";
-                    for (int i = 0; i < pendant.trajectoires.Length; i++)
-                        txtCoords.text += "\n" + pendant.trajectoires[i].Name;
+                    for (int i = 0; i < pendant.trajectoires.Length; i++) { txtCoords.text += "\n" + pendant.trajectoires[i].Name; }
+
+                    objSlider.SetActive(false);
+                    slider.value = 0;
                 }
                 // Si une trajectoire est en cours de lecture :
                 else
                 {
                     // On affiche la position de la torche
-                    txtMode.text = "Mode\nAUTO";
                     txtCoords.text = "\n\nX : " + posX + "\nY : " + posY + "\nZ : " + posZ;
+                    txtMode.text = "Mode\nAUTO";
+
+                    // Et l'avancee de la lecture du fichier ou de la trajectoire
+                    objSlider.SetActive(true);
+                    // Si on lit une trajectoire :
+                    if (!pendant.mvmtScript.trajectory.IsReading && pendant.mvmtScript.playingProgress[1] != 0)
+                    {
+                        slider.value = (float)pendant.mvmtScript.playingProgress[0] / (float)pendant.mvmtScript.playingProgress[1];
+
+                        // On affiche la vitesse de lecture
+                        txtMode.text = "Mode\nAUTO\n\n\n\nVitesse : " + pendant.mvmtScript.speed;
+                    }
+                    // Si on lit un fichier
+                    else if (pendant.mvmtScript.trajectory.IsReading && pendant.mvmtScript.readingStatus[1] != 0)
+                    { slider.value = (float)pendant.mvmtScript.readingStatus[0] / (float)pendant.mvmtScript.readingStatus[1]; }
                 }
                 break;
         }

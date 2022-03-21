@@ -10,6 +10,7 @@ public class Interaction2D : MonoBehaviour
     private Camera gameCamera;
     private InputAction click;
     private bool clicking;
+    private Collider lastPressed;
 
 
     void Awake()
@@ -22,12 +23,18 @@ public class Interaction2D : MonoBehaviour
             if (Physics.Raycast(gameCamera.ScreenPointToRay(coor), out hit))
             {
                 clicking = true;
+                lastPressed = hit.collider;
                 hit.collider.GetComponent<Boutons>()?.OnClick();
             }
         };
         click.canceled += ctx =>
         {
             clicking = false;
+            if (lastPressed != null)
+            {
+                lastPressed.GetComponent<Boutons>()?.OnStopClick();
+                lastPressed = null;
+            }
         };
         click.Enable();
     }

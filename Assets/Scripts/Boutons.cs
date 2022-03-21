@@ -7,20 +7,25 @@ public class Boutons : MonoBehaviour
     public GameObject pendant;
 
     #region Pour l'interaction 2D uniquement (utile au Debug)
-    // Déclenchement d'un appui avec la souris
+    // Declenchement d'un appui avec la souris
     public void OnClick()
     {
         Collider mouse = new Collider();
         OnTriggerEnter(mouse);
     }
 
-    // Appui prolongé avec la souris
+    // Appui prolonge avec la souris
     public void OnLongClick()
     {
         Collider mouse = new Collider();
         OnTriggerStay(mouse);
     }
 
+    public void OnStopClick()
+    {
+        Collider mouse = new Collider();
+        OnTriggerExit(mouse);
+    }
     #endregion
 
     #region Interactions 2D et 3D
@@ -60,11 +65,11 @@ public class Boutons : MonoBehaviour
         }
     }
 
-    // Pendant un appuie prolongé sur un bouton
+    // Pendant un appui prolonge sur un bouton
     private void OnTriggerStay(Collider other)
     {
         string bouton = this.tag;
-        // On appelle la fonction d'appui prolongé correspondante
+        // On appelle la fonction d'appui prolonge correspondante
         switch (bouton)
         {
             case "Plus":
@@ -79,11 +84,11 @@ public class Boutons : MonoBehaviour
         }
     }
 
-    // Quand on relâche un bouton
-    private void OnTriggerRelease(Collider other)
+    // Quand on relache un bouton
+    private void OnTriggerExit(Collider other)
     {
-        // Si le bouton est "Avance Rapide", on appelle sa fonction de relâchement
-        if (this.tag == "FF") { pendant.GetComponent<Pendant>().OnBFFTriggerStay(); }
+        // Si le bouton est "Avance Rapide", on appelle sa fonction de relachement
+        if (this.tag == "FF") { pendant.GetComponent<Pendant>().OnBFFTriggerExit(); }
     }
     #endregion
 }
