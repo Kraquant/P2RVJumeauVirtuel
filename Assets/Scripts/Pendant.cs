@@ -131,8 +131,8 @@ public class Pendant : MonoBehaviour
         axe5 = GameObject.Find("OsBras6");
         torche = GameObject.Find("torcheTresExtreme");
         cible.transform.SetParent(null);
-        axe6 = GameObject.Find("OsBras7");
-        axe7 = GameObject.Find("OsBras8");
+        axe6 = GameObject.Find("OsPlateau7");
+        axe7 = GameObject.Find("OsPlateau8");
 
         boutonDroit = GameObject.Find("ContextualRight");
         boutonGauche = GameObject.Find("ContextualLeft");
@@ -489,10 +489,10 @@ public class Pendant : MonoBehaviour
                 if (mode == Mode.AXES) { angle5 = pas_angle_current; }
                 break;
             case 6:
-                if (mode == Mode.AXES) { angle5 = pas_angle_current; }
+                if (mode == Mode.AXES) { angle6 = pas_angle_current; }
                 break;
             case 7:
-                if (mode == Mode.AXES) { angle5 = pas_angle_current; }
+                if (mode == Mode.AXES) { angle7 = pas_angle_current; }
                 break;
             default:
                 break;
@@ -553,7 +553,7 @@ public class Pendant : MonoBehaviour
             // On stock les valeurs d'angles courantes des bras 2 et 3
             limit1 = axe1.transform.localEulerAngles.z;
             limit2 = axe2.transform.localEulerAngles.z;
-            limit6 = axe6.transform.localEulerAngles.x;
+            limit6 = axe6.transform.localEulerAngles.z;
 
             // Si le bras 2 depasse ses limites de mouvements :
             if (limit1 + angle1 < 309 && limit1 + angle1 > 161)
@@ -576,11 +576,11 @@ public class Pendant : MonoBehaviour
             else { axe2.transform.localEulerAngles = Vector3.Lerp(axe2.transform.localEulerAngles, axe2.transform.localEulerAngles + new Vector3(0, 0, angle2), Time.deltaTime * 10); }
 
             // Si le bras 7 depasse ses limites de mouvements :
-            if (limit6 + angle6 < 354 && limit6 + angle6 > 94)
+            if (limit6 + angle6 < 266 && limit6 + angle6 > 4)
             {
                 // On le tourne vers la limite d'angle la plus proche de la valeur d'angle attendue
-                if (limit6 + angle6 > 135) { axe6.transform.localEulerAngles = Vector3.Lerp(axe6.transform.localEulerAngles, new Vector3(355, 0, 0), Time.deltaTime * 10); }
-                else { axe6.transform.localEulerAngles = Vector3.Lerp(axe6.transform.localEulerAngles, new Vector3(95, 0, 0), Time.deltaTime * 10); }
+                if (limit6 + angle6 > 135) { axe6.transform.localEulerAngles = Vector3.Lerp(axe6.transform.localEulerAngles, new Vector3(0, 0, 265), Time.deltaTime * 10); }
+                else { axe6.transform.localEulerAngles = Vector3.Lerp(axe6.transform.localEulerAngles, new Vector3(0, 0, 5), Time.deltaTime * 10); }
             }
             // Sinon, on le tourne de la valeur d'angle attendue
             else { axe6.transform.localEulerAngles = Vector3.Lerp(axe6.transform.localEulerAngles, axe6.transform.localEulerAngles + new Vector3(0, 0, angle6), Time.deltaTime * 10); }
