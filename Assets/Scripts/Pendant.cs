@@ -22,17 +22,20 @@ public class Pendant : MonoBehaviour
     private float posY;
     private float posZ;
 
-    // Angles des bras du robot
+    // Modifications à apporter aux angles des bras du robot
     private float angle0;
     private float angle1;
     private float angle2;
     private float angle3;
     private float angle4;
     private float angle5;
+    private float angle6;
+    private float angle7;
 
     // Variables permettant le calcul des limites d'angles des bras 2 et 3
     private float limit1;
     private float limit2;
+    private float limit6;
 
     // Elements permettant les calculs de cinematique inverse
     private GameObject finalIK;
@@ -48,6 +51,8 @@ public class Pendant : MonoBehaviour
     private GameObject axe3;
     private GameObject axe4;
     private GameObject axe5;
+    private GameObject axe6;
+    private GameObject axe7;
     private GameObject torche;
 
     // Textures des boutons du pendant
@@ -100,6 +105,8 @@ public class Pendant : MonoBehaviour
     public float Angle3 { get => angle3; set => angle3 = value; }
     public float Angle4 { get => angle4; set => angle4 = value; }
     public float Angle5 { get => angle5; set => angle5 = value; }
+    public float Angle6 { get => angle5; set => angle5 = value; }
+    public float Angle7 { get => angle5; set => angle5 = value; }
 
     // Au lancement :
     void Start()
@@ -124,6 +131,8 @@ public class Pendant : MonoBehaviour
         axe5 = GameObject.Find("OsBras6");
         torche = GameObject.Find("torcheTresExtreme");
         cible.transform.SetParent(null);
+        axe6 = GameObject.Find("OsBras7");
+        axe7 = GameObject.Find("OsBras8");
 
         boutonDroit = GameObject.Find("ContextualRight");
         boutonGauche = GameObject.Find("ContextualLeft");
@@ -182,9 +191,12 @@ public class Pendant : MonoBehaviour
         angle3 = 0;
         angle4 = 0;
         angle5 = 0;
+        angle6 = 0;
+        angle7 = 0;
 
         limit1 = 0;
         limit2 = 0;
+        limit6 = 0;
     }
 
     void EndTrajectory()
@@ -219,7 +231,7 @@ public class Pendant : MonoBehaviour
                 // En mode COORDS, il y a 3 "axes" differents (X, Y, Z)
                 if (mode == Mode.COORDS) { axe = 2; }
                 // En mode AXES, il y en a 6 (bras 1 a 6)
-                else { axe = 5; } 
+                else { axe = 7; } 
             }
         }
         // En mode AUTO sans trajectoire en cours de lecture :
@@ -238,7 +250,7 @@ public class Pendant : MonoBehaviour
         {
             axe += 1;
             // Le mode AXES a 6 "axes", le mode COORDS en a 3
-            if ((axe > 5 && mode == Mode.AXES) || (axe > 2 && mode == Mode.COORDS)) { axe = 0; }
+            if ((axe > 7 && mode == Mode.AXES) || (axe > 2 && mode == Mode.COORDS)) { axe = 0; }
         }
         // En mode AUTO sans trajectoire en cours de lecture :
         else if (trajOFF) 
@@ -265,6 +277,8 @@ public class Pendant : MonoBehaviour
             angle3 = 0;
             angle4 = 0;
             angle5 = 0;
+            angle6 = 0;
+            angle7 = 0;
 
             mode = Mode.AXES;
         }
@@ -419,6 +433,12 @@ public class Pendant : MonoBehaviour
             case 5:
                 if (mode == Mode.AXES) { angle5 = -pas_angle_current; }
                 break;
+            case 6:
+                if (mode == Mode.AXES) { angle6 = -pas_angle_current; }
+                break;
+            case 7:
+                if (mode == Mode.AXES) { angle7 = -pas_angle_current; }
+                break;
             default:
                 break;
         }
@@ -466,6 +486,12 @@ public class Pendant : MonoBehaviour
                 if (mode == Mode.AXES) { angle4 = pas_angle_current; }
                 break;
             case 5:
+                if (mode == Mode.AXES) { angle5 = pas_angle_current; }
+                break;
+            case 6:
+                if (mode == Mode.AXES) { angle5 = pas_angle_current; }
+                break;
+            case 7:
                 if (mode == Mode.AXES) { angle5 = pas_angle_current; }
                 break;
             default:
@@ -527,6 +553,7 @@ public class Pendant : MonoBehaviour
             // On stock les valeurs d'angles courantes des bras 2 et 3
             limit1 = axe1.transform.localEulerAngles.z;
             limit2 = axe2.transform.localEulerAngles.z;
+            limit6 = axe6.transform.localEulerAngles.x;
 
             // Si le bras 2 depasse ses limites de mouvements :
             if (limit1 + angle1 < 309 && limit1 + angle1 > 161)
@@ -548,11 +575,23 @@ public class Pendant : MonoBehaviour
             // Sinon, on le tourne de la valeur d'angle attendue
             else { axe2.transform.localEulerAngles = Vector3.Lerp(axe2.transform.localEulerAngles, axe2.transform.localEulerAngles + new Vector3(0, 0, angle2), Time.deltaTime * 10); }
 
+            // Si le bras 7 depasse ses limites de mouvements :
+            if (limit6 + angle6 < 354 && limit6 + angle6 > 94)
+            {
+                // On le tourne vers la limite d'angle la plus proche de la valeur d'angle attendue
+                if (limit6 + angle6 > 135) { axe6.transform.localEulerAngles = Vector3.Lerp(axe6.transform.localEulerAngles, new Vector3(355, 0, 0), Time.deltaTime * 10); }
+                else { axe6.transform.localEulerAngles = Vector3.Lerp(axe6.transform.localEulerAngles, new Vector3(95, 0, 0), Time.deltaTime * 10); }
+            }
+            // Sinon, on le tourne de la valeur d'angle attendue
+            else { axe6.transform.localEulerAngles = Vector3.Lerp(axe6.transform.localEulerAngles, axe6.transform.localEulerAngles + new Vector3(0, 0, angle6), Time.deltaTime * 10); }
+
+
             // On effectue la rotation des autres bras (ils n'ont pas de limites d'angle propres)
             axe0.transform.localEulerAngles = Vector3.Lerp(axe0.transform.localEulerAngles, axe0.transform.localEulerAngles + new Vector3(0, angle0, 0), Time.deltaTime * 10);
             axe3.transform.localEulerAngles = Vector3.Lerp(axe3.transform.localEulerAngles, axe3.transform.localEulerAngles + new Vector3(0, angle3, 0), Time.deltaTime * 10);
             axe4.transform.localEulerAngles = Vector3.Lerp(axe4.transform.localEulerAngles, axe4.transform.localEulerAngles + new Vector3(0, 0, angle4), Time.deltaTime * 10);
             axe5.transform.localEulerAngles = Vector3.Lerp(axe5.transform.localEulerAngles, axe5.transform.localEulerAngles + new Vector3(0, angle5, 0), Time.deltaTime * 10);
+            axe7.transform.localEulerAngles = Vector3.Lerp(axe7.transform.localEulerAngles, axe7.transform.localEulerAngles + new Vector3(0, angle7, 0), Time.deltaTime * 10);
 
             // On reinitialise les pas d'angles
             angle0 = 0;
@@ -561,6 +600,8 @@ public class Pendant : MonoBehaviour
             angle3 = 0;
             angle4 = 0;
             angle5 = 0;
+            angle6 = 0;
+            angle7 = 0;
         }
         // En mode AUTO :
         // Avant de lancer la lecture d'un fichier trajectoire
