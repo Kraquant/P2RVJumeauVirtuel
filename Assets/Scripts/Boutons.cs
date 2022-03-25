@@ -37,9 +37,11 @@ public class Boutons : MonoBehaviour
     // Lorsqu'on appuie sur un bouton
     private void OnTriggerEnter(Collider other)
     {
+        // Vibrations de la manette
         var device = InputSystem.GetDevice<XRController>(CommonUsages.RightHand);
         var command = UnityEngine.InputSystem.XR.Haptics.SendHapticImpulseCommand.Create(0, amplitude, duration);
         device.ExecuteCommand(ref command);
+
         string bouton = this.tag;
         Debug.Log(bouton);
         // On appelle la fonction d'appui correspondante
