@@ -6,6 +6,7 @@ using System.IO;
 
 public class Ecran : MonoBehaviour
 {
+    #region Parametres
     public GameObject pendantObject;
 
     [HideInInspector]
@@ -40,6 +41,7 @@ public class Ecran : MonoBehaviour
     private int axe;
     private bool trajOFF;
     private enum Mode { COORDS, AXES, AUTO }
+    #endregion
 
     // Au lancement :
     void Start()
