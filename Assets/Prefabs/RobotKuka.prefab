@@ -240,6 +240,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4646349948880215134, guid: 41995554fcd42fd428070de13ee5f3ef, type: 3}
+      propertyPath: scale
+      value: 0.001
+      objectReference: {fileID: 0}
+    - target: {fileID: 4646349948880215134, guid: 41995554fcd42fd428070de13ee5f3ef, type: 3}
       propertyPath: Torche
       value: 
       objectReference: {fileID: 7553309835070266614}
@@ -255,6 +259,26 @@ PrefabInstance:
       propertyPath: Target2
       value: 
       objectReference: {fileID: 3954278737733601747}
+    - target: {fileID: 4646349948880215134, guid: 41995554fcd42fd428070de13ee5f3ef, type: 3}
+      propertyPath: _pointScale
+      value: 0.08
+      objectReference: {fileID: 0}
+    - target: {fileID: 4646349948880215134, guid: 41995554fcd42fd428070de13ee5f3ef, type: 3}
+      propertyPath: dotMainCol.b
+      value: 0.3755785
+      objectReference: {fileID: 0}
+    - target: {fileID: 4646349948880215134, guid: 41995554fcd42fd428070de13ee5f3ef, type: 3}
+      propertyPath: dotMainCol.g
+      value: 0.3755785
+      objectReference: {fileID: 0}
+    - target: {fileID: 4646349948880215134, guid: 41995554fcd42fd428070de13ee5f3ef, type: 3}
+      propertyPath: dotMainCol.r
+      value: 0.3773585
+      objectReference: {fileID: 0}
+    - target: {fileID: 4646349948880215134, guid: 41995554fcd42fd428070de13ee5f3ef, type: 3}
+      propertyPath: pointResolution
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 41995554fcd42fd428070de13ee5f3ef, type: 3}
 --- !u!4 &1600585861228704863 stripped
