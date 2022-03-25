@@ -32,6 +32,8 @@ public class Ecran : MonoBehaviour
     private GameObject axe3;
     private GameObject axe4;
     private GameObject axe5;
+    private GameObject axe6;
+    private GameObject axe7;
 
     // Mode et parametres du pendant
     private Mode mode;
@@ -55,6 +57,8 @@ public class Ecran : MonoBehaviour
         axe3 = GameObject.Find("OsBras4");
         axe4 = GameObject.Find("OsBras5");
         axe5 = GameObject.Find("OsBras6");
+        axe6 = GameObject.Find("OsPlateau7");
+        axe7 = GameObject.Find("OsPlateau8");
 
         posX = cible.transform.position.x;
         posY = cible.transform.position.y;
@@ -86,6 +90,12 @@ public class Ecran : MonoBehaviour
                 break;
             case 5:
                 angle = axe5.transform.localEulerAngles.y;
+                break;
+            case 6:
+                angle = axe6.transform.localEulerAngles.z;
+                break;
+            case 7:
+                angle = axe7.transform.localEulerAngles.y;
                 break;
         }
     }
@@ -149,6 +159,12 @@ public class Ecran : MonoBehaviour
                         break;
                     case 5:
                         angle = axe5.transform.localEulerAngles.y;
+                        break;
+                    case 6:
+                        angle = axe6.transform.localEulerAngles.z;
+                        break;
+                    case 7:
+                        angle = axe7.transform.localEulerAngles.y;
                         break;
                 }
                 // On affiche la valeur d'angle de l'axe courant
