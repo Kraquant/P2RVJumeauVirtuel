@@ -40,7 +40,7 @@ public class Boutons : MonoBehaviour
         // Vibrations de la manette
         var device = InputSystem.GetDevice<XRController>(CommonUsages.RightHand);
         var command = UnityEngine.InputSystem.XR.Haptics.SendHapticImpulseCommand.Create(0, amplitude, duration);
-        device.ExecuteCommand(ref command);
+        //device.ExecuteCommand(ref command);
 
         string bouton = this.tag;
         Debug.Log(bouton);
