@@ -198,7 +198,7 @@ public class Pendant : MonoBehaviour
         limit2 = 0;
         limit6 = 0;
     }
-
+    
     void EndTrajectory()
     {
         readingInit = 0;
@@ -434,7 +434,7 @@ public class Pendant : MonoBehaviour
                 if (mode == Mode.AXES) { angle5 = -pas_angle_current; }
                 break;
             case 6:
-                if (mode == Mode.AXES) { angle6 = -pas_angle_current; }
+                if (mode == Mode.AXES) { angle6 = pas_angle_current; }
                 break;
             case 7:
                 if (mode == Mode.AXES) { angle7 = -pas_angle_current; }
@@ -489,7 +489,7 @@ public class Pendant : MonoBehaviour
                 if (mode == Mode.AXES) { angle5 = pas_angle_current; }
                 break;
             case 6:
-                if (mode == Mode.AXES) { angle6 = pas_angle_current; }
+                if (mode == Mode.AXES) { angle6 = -pas_angle_current; }
                 break;
             case 7:
                 if (mode == Mode.AXES) { angle7 = pas_angle_current; }
