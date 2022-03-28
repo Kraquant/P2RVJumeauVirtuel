@@ -5,6 +5,7 @@ using UnityEngine;
 public class Etincelles : MonoBehaviour
 {
     private ParticleSystem.MainModule main;
+    private ParticleSystemForceField gravity;
     private Pendant pendant;
     private bool isInTrajectory;
     private bool isReading;
@@ -15,6 +16,7 @@ public class Etincelles : MonoBehaviour
     {
         main = this.GetComponent<ParticleSystem>().main;
         main.maxParticles = 0;
+        gravity = GetComponent<ParticleSystemForceField>();
         pendant = GameObject.Find("Pendant").GetComponent<Pendant>();
         isInTrajectory = false;
         isReading = false;
@@ -24,6 +26,11 @@ public class Etincelles : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        transform.rotation = Quaternion.Euler(90, 0, 0);
+        Vector3 gravityDir = 500 * transform.InverseTransformDirection(-Vector3.up);
+        gravity.directionX = gravityDir.x;
+        gravity.directionY = gravityDir.y;
+        gravity.directionZ = gravityDir.z;
         isInTrajectory = pendant.mvmtScript.trajectory != null;
         if (isInTrajectory)
         {
