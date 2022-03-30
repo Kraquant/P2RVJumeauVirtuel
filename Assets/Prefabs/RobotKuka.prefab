@@ -40,6 +40,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6218709076983469916}
     m_Modifications:
+    - target: {fileID: 1499438225998936120, guid: be1c63b5c88c09c4694fdb2921669b1c, type: 3}
+      propertyPath: m_Range
+      value: 0.9
+      objectReference: {fileID: 0}
     - target: {fileID: 6266294162359313844, guid: be1c63b5c88c09c4694fdb2921669b1c, type: 3}
       propertyPath: m_Name
       value: BrasKuka

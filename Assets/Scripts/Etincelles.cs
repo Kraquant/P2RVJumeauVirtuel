@@ -54,7 +54,7 @@ public class Etincelles : MonoBehaviour
             if (isReading && isPrinting)
             {
                 main.maxParticles = 50;
-                flame.intensity = 10;
+                flame.intensity = 8;
             }
             else
             {
