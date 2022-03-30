@@ -15,6 +15,7 @@ TagManager:
   - TableTrigger
   - Hand
   - TableTriggerExit
+  - Mouse
   layers:
   - Default
   - TransparentFX
