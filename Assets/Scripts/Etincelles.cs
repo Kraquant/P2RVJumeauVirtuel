@@ -6,6 +6,7 @@ public class Etincelles : MonoBehaviour
 {
     private ParticleSystem.MainModule main;
     private ParticleSystemForceField gravity;
+    private Light flame;
     private Pendant pendant;
     private bool isInTrajectory;
     private bool isReading;
@@ -16,7 +17,12 @@ public class Etincelles : MonoBehaviour
     {
         main = this.GetComponent<ParticleSystem>().main;
         main.maxParticles = 0;
+        
         gravity = GetComponent<ParticleSystemForceField>();
+
+        flame = GetComponent<Light>();
+        flame.intensity = 0;
+
         pendant = GameObject.Find("Pendant").GetComponent<Pendant>();
         isInTrajectory = false;
         isReading = false;
@@ -26,8 +32,8 @@ public class Etincelles : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.rotation = Quaternion.Euler(90, 0, 0);
-        Vector3 gravityDir = 500 * transform.InverseTransformDirection(-Vector3.up);
+        transform.rotation = Quaternion.Euler(0, 0, 0);
+        Vector3 gravityDir = 100 * transform.InverseTransformDirection(-Vector3.up);
         gravity.directionX = gravityDir.x;
         gravity.directionY = gravityDir.y;
         gravity.directionZ = gravityDir.z;
@@ -39,15 +45,18 @@ public class Etincelles : MonoBehaviour
             if (isReading && isPrinting)
             {
                 main.maxParticles = 50;
+                flame.intensity = 10;
             }
             else
             {
                 main.maxParticles = 0;
+                flame.intensity = 0;
             }
         }
         else
         {
             main.maxParticles = 0;
+            flame.intensity = 0;
         }
     }
 }
