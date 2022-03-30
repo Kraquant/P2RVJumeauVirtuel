@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class Etincelles : MonoBehaviour
 {
+    private ParticleSystem ps;
     private ParticleSystem.MainModule main;
     private ParticleSystemForceField gravity;
     private Light flame;
@@ -18,7 +19,8 @@ public class Etincelles : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        main = this.GetComponent<ParticleSystem>().main;
+        ps = this.GetComponent<ParticleSystem>();
+        main = ps.main;
         main.maxParticles = 0;
         
         gravity = GetComponent<ParticleSystemForceField>();

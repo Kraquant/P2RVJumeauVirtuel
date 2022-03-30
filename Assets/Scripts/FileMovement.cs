@@ -25,7 +25,7 @@ public class FileMovement : MonoBehaviour
     public bool isActive { get { return _isActive; } }
     public bool isPrinting { get
         {
-            if(isActive && trajectory != null)
+            if(isActive && trajectory != null && !trajectory.IsReading)
             {
                 return trajectory.Points[_targetStep]._arc;
             }
