@@ -35,7 +35,7 @@ public class FileMovement : MonoBehaviour
             }
                 
         } }
-
+    public Vector3 initPos { get { return _initPos; } set { _initPos = value; } }
     //Private variables #########################################
     private bool _isActive;
     [SerializeField] float _duration;

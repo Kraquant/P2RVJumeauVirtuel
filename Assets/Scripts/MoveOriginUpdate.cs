@@ -14,8 +14,7 @@ public class MoveOriginUpdate : MonoBehaviour
     [SerializeField] float speed = 0.1f;
     private float rotateDirection;
 
-    //public GameObject Plateau8;
-    //public GameObject Kuka;
+    private FileMovement moveFile;
 
     [SerializeField] GameObject OsPlateau8;
     private bool isGrabbing;
@@ -40,6 +39,8 @@ public class MoveOriginUpdate : MonoBehaviour
         nearHand = false;
         isGrabbing = false;
         //work = true;
+
+        moveFile = GetComponent<FileMovement>();
     }
 
     private void FixedUpdate()
@@ -47,7 +48,9 @@ public class MoveOriginUpdate : MonoBehaviour
         this.transform.Rotate(0, sensitivity * rotateDirection, 0, Space.Self);
         if (isGrabbing)
         {
+            Debug.Log("test");
             this.transform.position = Vector3.MoveTowards(this.transform.position, target.transform.position + offset, speed);
+            moveFile.initPos = this.transform.position;
         }
 
         //if (workend)
@@ -92,7 +95,7 @@ public class MoveOriginUpdate : MonoBehaviour
 
     private void OnRotateActivate(InputAction.CallbackContext context)
     {
-        rotateDirection = context.ReadValue<float>();
+        rotateDirection = context.ReadValue<Vector2>().x;
     }
 
     private void OnTriggerEnter(Collider other)
