@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
 
-public class MoveOriginUpdate : MonoBehaviour
+public class MoveOrigin : MonoBehaviour
 {
     // Start is called before the first frame update
     [SerializeField] private InputActionAsset actionAsset;
@@ -20,7 +20,6 @@ public class MoveOriginUpdate : MonoBehaviour
     private bool isGrabbing;
     private bool nearTable;
     private bool nearHand;
-    //private bool work;
 
     void Start()
     {
@@ -38,7 +37,6 @@ public class MoveOriginUpdate : MonoBehaviour
         nearTable = false;
         nearHand = false;
         isGrabbing = false;
-        //work = true;
 
         moveFile = GetComponent<FileMovement>();
     }
@@ -52,27 +50,11 @@ public class MoveOriginUpdate : MonoBehaviour
             this.transform.position = Vector3.MoveTowards(this.transform.position, target.transform.position + offset, speed);
             moveFile.initPos = this.transform.position;
         }
-
-        //if (workend)
-        //{
-        //    if (nearTable)
-        //    {
-        //        transform.SetParent(OsPlateau8.transform);
-        //    }
-        //    else
-        //    {
-        //        Transform pos = transform;
-        //        Debug.Log(pos.position);
-        //        transform.parent = null;
-        //    }
-        //    workend = false;
-        //}
     }
 
     private void OnGrabActivate(InputAction.CallbackContext context)
     {
-        Debug.Log("Trying to grab");
-        if (nearHand)
+        if (nearHand && moveFile.trajectory != null)
         {
             isGrabbing = true;
             transform.parent = null;
@@ -95,6 +77,7 @@ public class MoveOriginUpdate : MonoBehaviour
 
     private void OnRotateActivate(InputAction.CallbackContext context)
     {
+        if (moveFile.trajectory == null) return;
         rotateDirection = context.ReadValue<Vector2>().x;
     }
 
@@ -132,25 +115,4 @@ public class MoveOriginUpdate : MonoBehaviour
         }
         //workend = true;
     }
-
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    Debug.Log("Collision");
-    //    if (other.gameObject == Plateau8)
-    //    {
-    //        Debug.Log("Bonne collision");
-    //        target.transform.SetParent(Plateau8.transform);
-    //        //target.transform.Rotate(new Vector3(1, 0, 0), 180);
-    //    }
-    //}
-    //private void OnTriggerExit(Collider other)
-    //{
-    //    Debug.Log("Collision quit");
-    //    if (other.gameObject == Plateau8)
-    //    {
-    //        Debug.Log("Bonne collision quit");
-    //        target.transform.SetParent(Kuka.transform);
-    //        target.transform.Rotate(-target.transform.rotation.eulerAngles);
-    //    }
-    //}
 }

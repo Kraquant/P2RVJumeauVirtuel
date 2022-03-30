@@ -207,6 +207,7 @@ public class FileMovement : MonoBehaviour
 
     public void stopPlaying()
     {
+        this.gameObject.GetComponent<MeshRenderer>().enabled = true;
         trajectory = null;
         _tInit = 0.0f;
         _duration = 0.0f;
@@ -234,6 +235,8 @@ public class FileMovement : MonoBehaviour
         }
         else
         {
+            //Remove mesh rendering
+            this.gameObject.GetComponent<MeshRenderer>().enabled = false;
             //Setting up new values for the variables.
             _duration = trajectory.Duration * 60;
             _stepMax = trajectory.Points.Length;
