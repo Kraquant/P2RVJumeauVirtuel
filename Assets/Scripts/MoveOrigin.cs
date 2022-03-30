@@ -54,7 +54,7 @@ public class MoveOrigin : MonoBehaviour
 
     private void OnGrabActivate(InputAction.CallbackContext context)
     {
-        if (nearHand && moveFile.trajectory != null)
+        if (nearHand && !moveFile.isActive)
         {
             isGrabbing = true;
             transform.parent = null;
@@ -77,7 +77,7 @@ public class MoveOrigin : MonoBehaviour
 
     private void OnRotateActivate(InputAction.CallbackContext context)
     {
-        if (moveFile.trajectory == null) return;
+        if (moveFile.isActive) return;
         rotateDirection = context.ReadValue<Vector2>().x;
     }
 

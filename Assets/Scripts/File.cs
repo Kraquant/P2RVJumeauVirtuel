@@ -7,7 +7,7 @@ using System.Threading;
 
 public class File
 {
-    //Private attributes
+    #region Private attributes
     private List<Point> _pointList;
     private int _duration;
     private string _name;
@@ -15,8 +15,9 @@ public class File
     private Thread threadReading;
     private int[] _readingStatus;
     private int _maxLevel;
+    #endregion
 
-    //Properties
+    #region Public attributes
     public int Duration
     {
         get {
@@ -45,6 +46,10 @@ public class File
             }
         }
     }
+    
+    /// <summary>
+    /// Returns an array with the points contained in the file
+    /// </summary>
     public Point[] Points {
         get
         {
@@ -59,6 +64,10 @@ public class File
             }
         }
     }
+    
+    /// <summary>
+    /// Get reading status of the file. Reading is done on a separate thread.
+    /// </summary>
     public bool IsReading
     {
         get
@@ -66,6 +75,10 @@ public class File
             return threadReading.IsAlive;
         }
     }
+    
+    /// <summary>
+    /// Return the reading status of the file [current line, number of lines]
+    /// </summary>
     public int[] readingStatus
     {
         get
@@ -87,7 +100,9 @@ public class File
             }
         }
     }
-
+    #endregion
+    
+    #region Constructors
     public File()
     {
         _pointList = new List<Point>();
@@ -124,7 +139,50 @@ public class File
         threadReading = new Thread(readFile);
         threadReading.Start();
     }
+    #endregion
 
+    #region Public methods
+    /// <summary>
+    /// Shows the different properties of the file after reading
+    /// </summary>
+    public void printStats()
+    {
+        Debug.Log("File object properties:\nName: " + _name + "\nDuration: " + _duration + " minutes\nNumberOfPoints: " + _pointList.Count);
+    }
+
+    /// <summary>
+    /// Stop the code until the current file is done reading
+    /// </summary>
+    public void waitEndReading()
+    {
+        if (threadReading.IsAlive)
+        {
+            threadReading.Join();
+        }
+    }
+
+    /// <summary>
+    /// Change the data file stored in the current object
+    /// </summary>
+    /// <param name="file">File asset</param>
+    public void readNewFile(TextAsset file)
+    {
+        _pointList = new List<Point>();
+        _name = "Undefined name";
+        _duration = 0;
+        _maxLevel = 0;
+        _fileText = file.text;
+        _readingStatus = new int[2] { 0, 0 };
+
+        threadReading = new Thread(readFile);
+        threadReading.Start();
+    }
+    #endregion
+
+    #region Private methods
+    /// <summary>
+    /// Method used to read the trajectory file
+    /// </summary>
     private void readFile()
     {
         Debug.Log("Reading File...");
@@ -260,7 +318,8 @@ public class File
                 float aF, bF, cF;
                 float e1F, e2F;
 
-                //Replacing dots with comma
+                //Replacing dots with comm
+                //a
 
                 string xS = xLine.Value.Replace('.', ',');
                 string yS = yLine.Value.Replace('.', ',');
@@ -305,38 +364,5 @@ public class File
         _readingStatus[0] = 0;
         _readingStatus[1] = 0;
     }
-
-    public void printStats()
-    {
-        Debug.Log("File object properties:\nName: " + _name + "\nDuration: " + _duration + " minutes\nNumberOfPoints: " + _pointList.Count);
-    }
-
-    public void debugReadPoints()
-    {
-        foreach(Point point in _pointList)
-        {
-            point.printPoint();
-        }
-    }
-
-    public void waitEndReading()
-    {
-        if (threadReading.IsAlive)
-        {
-            threadReading.Join();
-        }
-    }
-
-    public void readNewFile(TextAsset file)
-    {
-        _pointList = new List<Point>();
-        _name = "Undefined name";
-        _duration = 0;
-        _maxLevel = 0;
-        _fileText = file.text;
-        _readingStatus = new int[2] { 0, 0 };
-
-        threadReading = new Thread(readFile);
-        threadReading.Start();
-    }
+    #endregion
 }
