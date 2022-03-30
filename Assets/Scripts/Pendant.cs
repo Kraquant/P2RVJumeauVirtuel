@@ -6,7 +6,7 @@ using System.IO;
 
 public class Pendant : MonoBehaviour
 {
-    #region variables
+    #region Variables
     public string path;
     public FileInfo[] trajectoires; // Liste des fichiers trajectoires
     public int axe; // Indice de l'axe, de la trajectoire ou du bras courant 
@@ -43,7 +43,7 @@ public class Pendant : MonoBehaviour
 
     // Variables de gestion des delais d'appui prolonge
     private float pressTime; // Date d'appui
-    private int readingInit; // Lancement de la lecture d'un fichier :
+    public int readingInit; // Lancement de la lecture d'un fichier :
                              // 0 = pas en cours, 1 = en cours, 2 = fini, 3 = trajectoire en cours de lecture
     private float delay; // Temps minimum d'appui pour le considerer comme "prolonge"
     private float pas_pos_current; // Pas en distance courant
