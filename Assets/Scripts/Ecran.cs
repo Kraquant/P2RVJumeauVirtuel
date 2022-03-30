@@ -4,6 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 
+
+// Gestion de l'affichage d'informations a l'ecran
+// Auteurs : Eugene Castelneau et Luc Pares
+
 public class Ecran : MonoBehaviour
 {
     #region Parametres

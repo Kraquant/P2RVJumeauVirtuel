@@ -4,6 +4,9 @@ using UnityEngine;
 using RootMotion.FinalIK;
 using System.IO;
 
+// Fonctions associees a chaque bouton du pendant et controle du robot en mode AXES et COORDS
+// Auteurs : Eugene Castelneau et Luc Pares
+
 public class Pendant : MonoBehaviour
 {
     #region Variables
