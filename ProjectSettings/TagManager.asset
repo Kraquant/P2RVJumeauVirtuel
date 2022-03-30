@@ -12,6 +12,9 @@ TagManager:
   - Play
   - FF
   - Mode
+  - TableTrigger
+  - Hand
+  - TableTriggerExit
   layers:
   - Default
   - TransparentFX
