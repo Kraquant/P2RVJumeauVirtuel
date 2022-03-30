@@ -146,7 +146,7 @@ public class FileMovement : MonoBehaviour
 
     private Vector3 scaledCoords(Point point)
     {
-        return _initPos + (_reference - point._coords) * scale;
+        return _initPos + this.transform.rotation * (_reference - point._coords) * scale;
     }
 
     private void clearPoints()
