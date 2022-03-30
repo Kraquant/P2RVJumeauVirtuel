@@ -15,12 +15,27 @@ public class FileMovement : MonoBehaviour
         Instant = 2,
     }
     // test merge// 
-    //Public variables ##########################################
+    #region Public attributes
     [Range(0, 4.0f)] public float speed = 1.0f;
-    public float scale = 0.001f;
+    /// <summary>
+    /// Scale of the piece that is drawn
+    /// </summary>
+    public float scale = 0.001f; 
+    /// <summary>
+    /// Loop the reading of the file
+    /// </summary>
     public bool loop = false;
+    /// <summary>
+    /// Variable containing the trajectory file
+    /// </summary>
     public File trajectory { get; private set; }
+    /// <summary>
+    /// Get the playing progress of the animation
+    /// </summary>
     public int[] playingProgress { get { return _playingProgress; } }
+    /// <summary>
+    /// Get the reading status of the file
+    /// </summary>
     public int[] readingStatus { get { return trajectory.readingStatus; } }
     public bool isActive { get { return _isActive; } }
     public bool isPrinting { get
@@ -35,8 +50,24 @@ public class FileMovement : MonoBehaviour
             }
                 
         } }
+    /// <summary>
+    /// Reference of the origin for the file
+    /// </summary>
     public Vector3 initPos { get { return _initPos; } set { _initPos = value; } }
-    //Private variables #########################################
+
+    //Variables for point drawing
+    public DrawingType drawingAction = DrawingType.Continuous;
+    public Color dotMainCol = Color.white;
+    /// <summary>
+    /// Draw one point every pointResolution
+    /// </summary>
+    public int pointResolution = 10;
+    [SerializeField] GameObject _billBoard;
+    public float _pointScale = 10.0f;
+    public bool showLevels = false;
+    #endregion
+
+    #region Private attributes
     private bool _isActive;
     [SerializeField] float _duration;
     private float _tInit;
@@ -51,20 +82,16 @@ public class FileMovement : MonoBehaviour
     [SerializeField] GameObject OsBras5;
     [SerializeField] GameObject Torche;
 
-    //Variables for point drawing
-    public DrawingType drawingAction = DrawingType.Continuous;
-    public Color dotMainCol = Color.white;
-    public int pointResolution = 10; //Draw one point every pointResolution
-    [SerializeField] GameObject _billBoard;
-    public float _pointScale = 10.0f;
-    public bool showLevels = false;
     private GameObject _pointsHolder;
     private List<GameObject> _billboardRef;
 
     private int[] _playingProgress;
-
     private int _targetStep;
 
+    private bool _reachedOrigin;
+    #endregion
+
+    #region Private methods
     void Start()
     {
         //Setup intern variables
@@ -77,7 +104,6 @@ public class FileMovement : MonoBehaviour
 
     }
 
-    // Update is called once per frame
     void Update()
     {
 
@@ -94,13 +120,19 @@ public class FileMovement : MonoBehaviour
         {
             moveKukaWithSpeed();
         }
-        else if (trajectory == null && Vector3.Distance(this.transform.position, _initPos) > Vector3.kEpsilon) //Returning to origin
+        else if (trajectory == null && Vector3.Distance(this.transform.position, _initPos) > Vector3.kEpsilon && !_reachedOrigin) //Returning to origin
         {
             this.transform.position = Vector3.MoveTowards(this.transform.position, _initPos, speed * Time.deltaTime);
             Target2.transform.position = this.transform.position + (Vector3.up).normalized * _TorcheLen;
         }
+        else if (trajectory == null && Vector3.Distance(this.transform.position, _initPos) <= Vector3.kEpsilon)
+        {
+            _reachedOrigin = true;
+        }
     }
-
+    /// <summary>
+    /// Moves the gameObject using the speed value to iterate through the points
+    /// </summary>
     private void moveKukaWithSpeed()
     {
         bool distanceReached = false;
@@ -143,11 +175,53 @@ public class FileMovement : MonoBehaviour
         if (endReading) stopPlaying();
     }
 
+    private void OnFileDoneReading()
+    {
+        if (trajectory.IsReading)
+        {
+            UnityEngine.Debug.LogError("File Access Denied");
+        }
+        else
+        {
+            //Remove mesh rendering
+            this.gameObject.transform.GetChild(0).gameObject.SetActive(false);
+            //Setting up new values for the variables.
+            _duration = trajectory.Duration * 60;
+            _stepMax = trajectory.Points.Length;
+            playingProgress[1] = _stepMax;
+            _isActive = true;
+            _reference = trajectory.Points[0]._coords;
+            _tInit = Time.deltaTime;
+            _targetStep = 0;
+            _initPos = this.transform.position;
 
+            //Before anything, we need to clear the previous points...
+            //Then we create new ones
+            clearPoints();
+            _levels = new GameObject[trajectory.maxLevel];
+            for (int i = 0; i < _levels.Length; i++)
+            {
+                GameObject iLevel = new GameObject();
+                iLevel.name = "Soudure niveau " + (i + 1).ToString();
+                iLevel.transform.SetParent(_pointsHolder.transform);
+                _levels[i] = iLevel;
+            }
+            instantiatePoints();
+        }
+    }
+    /// <summary>
+    /// Scale the coordinates of the file to match the coordinates of the unity world
+    /// </summary>
+    /// <param name="point">Point to scale</param>
+    /// <returns></returns>
     private Vector3 scaledCoords(Point point)
     {
         return _initPos + this.transform.rotation * (_reference - point._coords) * scale;
     }
+    #endregion
+
+    #region Public Methods
+
 
     private void clearPoints()
     {
@@ -156,6 +230,7 @@ public class FileMovement : MonoBehaviour
         _pointsHolder = new GameObject();
         _pointsHolder.name = "CoordinatesPoints";
     }
+
     public void instantiatePoints()
     {
         float H, S, V;
@@ -191,23 +266,33 @@ public class FileMovement : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Activate the billboard object referenced by the ID
+    /// </summary>
+    /// <param name="pointInd">Id of the billboard object</param>
     public void drawContinuousPoints(int pointInd)
     {
         if (pointInd % pointResolution == 0)
         {
             _billboardRef[pointInd / pointResolution].SetActive(true);
         }
-        
+
     }
 
+    /// <summary>
+    /// Pause/Play the animation
+    /// </summary>
     public void togglePlaying()
     {
         _isActive = !_isActive;
     }
 
+    /// <summary>
+    /// Stop the animation and clean the attributes
+    /// </summary>
     public void stopPlaying()
     {
-        this.gameObject.GetComponent<MeshRenderer>().enabled = true;
+        this.gameObject.transform.GetChild(0).gameObject.SetActive(true);
         trajectory = null;
         _tInit = 0.0f;
         _duration = 0.0f;
@@ -215,6 +300,7 @@ public class FileMovement : MonoBehaviour
         _isActive = false;
         _loadingFile = false;
         clearPoints();
+        _reachedOrigin = false;
     }
 
     public void loadNewFile(string path)
@@ -226,38 +312,5 @@ public class FileMovement : MonoBehaviour
             _loadingFile = true;
         }
     }
-
-    private void OnFileDoneReading()
-    {
-        if (trajectory.IsReading)
-        {
-            UnityEngine.Debug.LogError("File Access Denied");
-        }
-        else
-        {
-            //Remove mesh rendering
-            this.gameObject.GetComponent<MeshRenderer>().enabled = false;
-            //Setting up new values for the variables.
-            _duration = trajectory.Duration * 60;
-            _stepMax = trajectory.Points.Length;
-            playingProgress[1] = _stepMax;
-            _isActive = true;
-            _reference = trajectory.Points[0]._coords;
-            _tInit = Time.deltaTime;
-            _targetStep = 0;
-
-            //Before anything, we need to clear the previous points...
-            //Then we create new ones
-            clearPoints();
-            _levels = new GameObject[trajectory.maxLevel];
-            for (int i = 0; i < _levels.Length; i++)
-            {
-                GameObject iLevel = new GameObject();
-                iLevel.name = "Soudure niveau " + (i + 1).ToString();
-                iLevel.transform.SetParent(_pointsHolder.transform);
-                _levels[i] = iLevel;
-            }
-            instantiatePoints();
-        }
-    }
+    #endregion
 }
