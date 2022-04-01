@@ -9,7 +9,6 @@ public class TeleportationManager : MonoBehaviour
     [SerializeField] private InputActionAsset actionAsset;
     [SerializeField] private TeleportationProvider provider;
     [SerializeField] private XRRayInteractor rayInteractor;
-    private bool isActive;
 
     void Start()
     {
@@ -27,7 +26,6 @@ public class TeleportationManager : MonoBehaviour
     {
         rayInteractor.enabled = true;
         Debug.Log("Activation de la TP");
-        isActive = true;
     }
 
     private void OnTeleportationCancel(InputAction.CallbackContext context)
@@ -48,6 +46,5 @@ public class TeleportationManager : MonoBehaviour
 
         rayInteractor.enabled = false;
         Debug.Log("Desactivation de la TP");
-        isActive = false;
     }
 }
